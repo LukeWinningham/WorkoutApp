@@ -1,0 +1,17 @@
+//
+//  WorkoutAppApp.swift
+//  WorkoutApp
+//
+//  Created by Luke Winningham on 1/29/24.
+//
+
+import SwiftUI
+
+@main
+struct WorkoutAppApp: App {
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+        }
+    }
+}
