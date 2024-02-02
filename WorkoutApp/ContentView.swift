@@ -50,8 +50,9 @@ struct ContentView: View {
         .onAppear {
             if currentDate != getCurrentDay() {
                           // If the stored date is different from the current day, reset 'done' to 0
+                            done = 0
                           UserDefaults.standard.set(0, forKey: "doneKey")
-                          self.done = 0
+                          
                           // Update the stored date to the current day
                           UserDefaults.standard.set(getCurrentDay(), forKey: "currentDateKey")
                           self.currentDate = getCurrentDay()
@@ -109,62 +110,68 @@ struct TodayView: View {
     }
 
     private var dayTitle: some View {
-        Text("Today is \(getCurrentDay())!")
-            .font(.largeTitle)
-            .bold()
-            .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
-            .padding(.top, 20)
+        VStack{
+            Text("Today is \(getCurrentDay())!")
+                .font(.largeTitle)
+                .bold()
+                .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
+                .padding(.top, 20)
+            
+        }
     }
 
     private var workoutsList: some View {
-        ScrollView {
-            LazyVStack(spacing: 10) {
-                if let todayTasks = weekData.days.first(where: { $0.name == getCurrentDay() }), !todayTasks.items.isEmpty, done < 1 {
-                    ForEach(Array(todayTasks.items.enumerated()), id: \.element.id) { index, uniqueItem in
-                        VStack {
-                            HStack(spacing: 20) {
-                                Circle()
-                                    .foregroundColor(Color(red: 0.07, green: 0.69, blue: 0.951))
-                                    .frame(width: 50, height: 40)
-                                    .shadow(radius: 5)
-                                    .opacity(0.5)
-                                Text(uniqueItem.value)
-                                    .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
-                                    .font(.system(size: 20))
-                                Spacer()
-                            }
-                            .onTapGesture {
-                                selectedExerciseIndex = index
-                                showingExerciseView = true
-                            }
-                            .sheet(isPresented: $showingExerciseView) {
-                                if let index = selectedExerciseIndex {
-                                    Exercise(exerciseIndex: index)
+        Group {
+            if let todayTasks = weekData.days.first(where: { $0.name == getCurrentDay() }), !todayTasks.items.isEmpty, done < 1 {
+                ScrollView {
+                    LazyVStack(spacing: 10) {
+                        ForEach(Array(todayTasks.items.enumerated()), id: \.element.id) { index, uniqueItem in
+                            VStack {
+                                HStack(spacing: 20) {
+                                    Circle()
+                                        .foregroundColor(Color(red: 0.07, green: 0.69, blue: 0.951))
+                                        .frame(width: 50, height: 40)
+                                        .shadow(radius: 5)
+                                        .opacity(0.5)
+                                    Text(uniqueItem.value)
+                                        .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
+                                        .font(.system(size: 20))
+                                    Spacer()
                                 }
+                                .onTapGesture {
+                                    selectedExerciseIndex = index
+                                    showingExerciseView = true
+                                }
+                                .sheet(isPresented: $showingExerciseView) {
+                                    if let index = selectedExerciseIndex {
+                                        Exercise(exerciseIndex: index)
+                                    }
+                                }
+                                .padding()
+                                Divider()
                             }
-                            .padding()
-                            Divider()
                         }
                     }
-                } else {
-                    VStack{
-                        Image("Image")
-                            .resizable() // Make the image resizable
-                            .aspectRatio(contentMode: .fill) // Keep the aspect ratio and fill the available space
-                            .frame(width: 380, height: 380) // Set the frame size as desired
-                            .clipped() // Clip the image to the
-                        Text("Relax, You EARNED It!")
-                            .font(.title)
-                            .foregroundColor(Color(red: 0.067, green: 0.69, blue: 0.951))
-                            .bold()
-                    }
-                    
+                    .padding(.horizontal)
                 }
+                .border(Color.gray, width: 0.2)
+            } else {
+                VStack {
+                    Image("Image") // Make sure you have this image in your assets
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 380, height: 380)
+                        .clipped()
+                    Text("Relax, You EARNED It!")
+                        .font(.title)
+                        .foregroundColor(Color(red: 0.067, green: 0.69, blue: 0.951))
+                        .bold()
+                }
+                // This VStack won't be in a ScrollView and won't have a border
             }
-           
-            .padding(.horizontal)
         }
     }
+
 
     private var startWorkoutButton: some View {
         Group {
@@ -172,13 +179,18 @@ struct TodayView: View {
                 // Only show the "Start Workout" button if there are workouts for today
                 NavigationLink(destination: WorkoutDetails()) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(LinearGradient(gradient: Gradient(colors: [Color(red: 0.067, green: 0.69, blue: 0.951), Color(hue: 1.0, saturation: 0.251, brightness: 0.675)]), startPoint: .topLeading, endPoint: .bottomTrailing))
-                            .frame(width: 180, height: 50)
-                            .opacity(0.7)
-                        Text("Start Workout")
-                            .foregroundColor(.white)
-                            .font(.headline)
+                        VStack{
+                  
+                            ZStack{
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(LinearGradient(gradient: Gradient(colors: [Color(red: 0.067, green: 0.69, blue: 0.951), Color(hue: 1.0, saturation: 0.251, brightness: 0.675)]), startPoint: .topLeading, endPoint: .bottomTrailing))
+                                    .frame(width: 180, height: 50)
+                                    .opacity(0.7)
+                                Text("Start Workout")
+                                    .foregroundColor(.white)
+                                    .font(.headline)
+                            }
+                        }
                     }
                     .padding()
                 }

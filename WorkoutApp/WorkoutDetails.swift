@@ -95,7 +95,11 @@ struct WorkoutDetails: View {
                                         ForEach(0..<numberSets, id: \.self) { setIndex in
                                             RectangleWithText(text: "Set \(setIndex + 1)")
                                         }
+                                        .padding(.top, 8.0)
+                                        
                                     }
+                                    .border(Color.gray, width: 0.2) // Apply border to VStack
+
                                 } else if let time = todayWorkout.items[currentIndex].time {
                                     Text("for \(time) mins")
                                     Spacer()

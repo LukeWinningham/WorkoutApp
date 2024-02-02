@@ -462,6 +462,7 @@ struct DayDetailView: View {
     }
 
         var itemsListView: some View {
+            
             ScrollView {
                 LazyVStack {
                     ForEach(day.items.indices, id: \.self) { index in
@@ -511,6 +512,7 @@ struct DayDetailView: View {
                         Divider()
                             .background(Color(red: 160/255, green: 160/255, blue: 160/255))
                     }
+                    
                 }
                 Button(action: {
                     
@@ -523,6 +525,8 @@ struct DayDetailView: View {
                 }
                 .padding()
             }
+            .border(Color.gray, width: 0.2) // Apply border to VStack
+
         }
     }
 
