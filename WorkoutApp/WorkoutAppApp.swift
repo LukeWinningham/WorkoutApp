@@ -11,7 +11,8 @@ import SwiftUI
 struct WorkoutAppApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView() // Initialize ContentView
+                .environmentObject(WeekData.shared) // Inject WeekData.shared as an Environment Object
         }
     }
 }
