@@ -81,10 +81,11 @@ struct WorkoutDetails: View {
                             VStack(spacing: 20) {
                                 Text(todayWorkout.items[currentIndex].value)
                                     .font(.title)
+                                    .multilineTextAlignment(.center)
                                     .bold()
                                     .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
                                     .padding(.top, 20)
-                                                              
+                                    .padding(.horizontal, 45.0)
                                 if let numberSets = todayWorkout.items[currentIndex].numberSets {
                                     Text("Last 3 Sets: 300, 200, 100")
                                         .font(.body)
@@ -132,6 +133,7 @@ struct WorkoutDetails: View {
                                     }
                                     else{
                                         done += 1
+                                        print(done)
                                         UserDefaults.standard.set(done, forKey: "doneKey") // Save done to UserDefaults
                                         print(done)
                                         self.presentationMode.wrappedValue.dismiss()

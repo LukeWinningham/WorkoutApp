@@ -362,11 +362,28 @@ struct DayDetailView: View {
                                 if let time = Int(timeText.trimmingCharacters(in: .whitespaces)), time > 0 {
                                     errorMessage = "Please provide either Sets and Reps OR Time, but not both."
                                 } else {
-                                    // Add new workout with Sets and Reps
-                                    let newItemToAdd = UniqueItem(value: newItem, numberSets: sets, numberReps: reps, time: nil, description: descriptionText)
-                                    day.items.append(newItemToAdd)
-                                    weekData.updateDay(day)
+                                    if let editingIndex = self.editingIndex {
+                                        // Editing an existing item
+                                        if editingIndex < day.items.count {
+                                            var editedItem = day.items[editingIndex]
+                                            editedItem.value = newItem
+                                            editedItem.numberSets = sets
+                                            editedItem.numberReps = reps
+                                            editedItem.time = nil // Reset time
+                                            editedItem.description = descriptionText
+                                            
+                                            // Update the item at editingIndex
+                                            day.items[editingIndex] = editedItem
+                                            weekData.updateDay(day)
+                                        }
+                                    } else {
+                                        // Adding a new workout with Sets and Reps
+                                        let newItemToAdd = UniqueItem(value: newItem, numberSets: sets, numberReps: reps, time: nil, description: descriptionText)
+                                        day.items.append(newItemToAdd)
+                                        weekData.updateDay(day)
                                     
+                                    }
+
                                     // Reset fields and hide container
                                     newItem = ""
                                     setsText = ""
@@ -378,10 +395,26 @@ struct DayDetailView: View {
                                     self.editingIndex = nil
                                 }
                             } else if let time = Int(timeText.trimmingCharacters(in: .whitespaces)), time > 0 {
-                                // Add new workout with Time
-                                let newItemToAdd = UniqueItem(value: newItem, numberSets: nil, numberReps: nil, time: time, description: descriptionText)
-                                day.items.append(newItemToAdd)
-                                weekData.updateDay(day)
+                                if let editingIndex = self.editingIndex {
+                                    // Editing an existing item
+                                    if editingIndex < day.items.count {
+                                        var editedItem = day.items[editingIndex]
+                                        editedItem.value = newItem
+                                        editedItem.numberSets = nil // Reset sets
+                                        editedItem.numberReps = nil // Reset reps
+                                        editedItem.time = time
+                                        editedItem.description = descriptionText
+                                        
+                                        // Update the item at editingIndex
+                                        day.items[editingIndex] = editedItem
+                                        weekData.updateDay(day)
+                                    }
+                                } else {
+                                    // Adding a new workout with Time
+                                    let newItemToAdd = UniqueItem(value: newItem, numberSets: nil, numberReps: nil, time: time, description: descriptionText)
+                                    day.items.append(newItemToAdd)
+                                    weekData.updateDay(day)
+                                }
                                 
                                 // Reset fields and hide container
                                 newItem = ""

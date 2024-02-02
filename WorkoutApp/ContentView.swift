@@ -168,7 +168,7 @@ struct TodayView: View {
 
     private var startWorkoutButton: some View {
         Group {
-            if let todayTasks = weekData.days.first(where: { $0.name == getCurrentDay() }), !todayTasks.items.isEmpty {
+            if let todayTasks = weekData.days.first(where: { $0.name == getCurrentDay() }), !todayTasks.items.isEmpty, done < 1 {
                 // Only show the "Start Workout" button if there are workouts for today
                 NavigationLink(destination: WorkoutDetails()) {
                     ZStack {

@@ -55,11 +55,14 @@ struct Exercise: View {
                                         Text("You have \(numberSets) sets of \(numberReps) reps of")
                                             .font(.title3)
                                             .foregroundColor(Color(hue: 1.0, saturation: 0.0, brightness: 0.815))
+                                            .multilineTextAlignment(.center)
                                             .padding(.top, 20)
                                         Text(todayWorkout.items[exerciseIndex].value)
                                             .font(.largeTitle)
                                             .foregroundColor(.white)
+                                            .multilineTextAlignment(.center)
                                             .bold()
+                                            .padding(.horizontal, 45.0)
 
                                         VStack {
                                             Text("Personal Best")
@@ -86,10 +89,12 @@ struct Exercise: View {
                                         Text("You have \(time) minutes of")
                                             .font(.title3)
                                             .foregroundColor(Color(hue: 1.0, saturation: 0.0, brightness: 0.815))
+                                            .multilineTextAlignment(.center)
                                             .padding(.top, 20)
                                         Text(todayWorkout.items[exerciseIndex].value)
                                             .font(.largeTitle)
                                             .foregroundColor(.white)
+                                            .multilineTextAlignment(.center)
                                             .bold()
                                     }
 
