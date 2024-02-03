@@ -320,7 +320,7 @@ struct DayDetailView: View {
             
             VStack(spacing: 10) {
                 
-                CustomTextField(placeholder: "Exercise", text: $newItem, placeholderTextColor: UIColor.lightGray)
+                CustomTextField(placeholder: "Name of Exercise", text: $newItem, placeholderTextColor: UIColor.lightGray)
                     .padding()
                     .background(Color.white)
                     .cornerRadius(5)
@@ -328,14 +328,14 @@ struct DayDetailView: View {
                     .padding(.horizontal)
                     .frame(height: 50)
                 
-                CustomTextField(placeholder: "Number of Sets", text: $setsText, placeholderTextColor: UIColor.lightGray)
+                CustomTextField(placeholder: "Number of Sets (1 - 10)", text: $setsText, placeholderTextColor: UIColor.lightGray)
                     .padding()
                     .background(Color.white)
                     .cornerRadius(5)
                     .padding(.horizontal)
                     .foregroundColor(Color.black)
                     .frame(height: 50)
-                CustomTextField(placeholder: "Number of Reps", text: $repsText, placeholderTextColor: UIColor.lightGray)
+                CustomTextField(placeholder: "Number of Reps (1 - 99)", text: $repsText, placeholderTextColor: UIColor.lightGray)
                     .padding()
                     .background(Color.white)
                     .cornerRadius(5)
@@ -358,8 +358,8 @@ struct DayDetailView: View {
                     withAnimation {
                         // Check if at least one of sets and reps or time is provided
                         if !newItem.isEmpty {
-                            if let sets = Int(setsText.trimmingCharacters(in: .whitespaces)), let reps = Int(repsText.trimmingCharacters(in: .whitespaces)), sets > 0, reps > 0 {
-                                if let time = Int(timeText.trimmingCharacters(in: .whitespaces)), time > 0 {
+                            if let sets = Int(setsText.trimmingCharacters(in: .whitespaces)), let reps = Int(repsText.trimmingCharacters(in: .whitespaces)), sets > 0, sets < 11, reps < 100, reps > 0 {
+                                if let time = Int(timeText.trimmingCharacters(in: .whitespaces)), time > 0, time < 999 {
                                     errorMessage = "Please provide either Sets and Reps OR Time, but not both."
                                 } else {
                                     if let editingIndex = self.editingIndex {
@@ -394,7 +394,7 @@ struct DayDetailView: View {
                                     isTextFieldContainerVisible = false
                                     self.editingIndex = nil
                                 }
-                            } else if let time = Int(timeText.trimmingCharacters(in: .whitespaces)), time > 0 {
+                            } else if let time = Int(timeText.trimmingCharacters(in: .whitespaces)), time > 0, time < 999 {
                                 if let editingIndex = self.editingIndex {
                                     // Editing an existing item
                                     if editingIndex < day.items.count {
@@ -468,14 +468,18 @@ struct DayDetailView: View {
                     ForEach(day.items.indices, id: \.self) { index in
                         let item = day.items[index]
                         VStack {
-                            
+                            RoundedRectangle(cornerRadius: 10) // Adjust cornerRadius as needed
+                                .fill(Color(hue: 1.0, saturation: 0.0, brightness: 0.908)) // Use any color that fits your design
+                                .frame(height: 70) // Adjust height as needed
+                                .shadow(radius: 5) // Adjust shadow radius as needed
+                                .overlay(
                             HStack {
                                 Circle()
                                     .frame(width: 50, height: 40)
                                     .shadow(radius: 5)
                                     .foregroundColor(Color(red: 0.07, green: 0.69, blue: 0.951))
                                     .opacity(1)
-                                VStack{
+                                VStack(alignment: .leading){
                                     Text(item.value)
                                         .font(.system(size: 20))
                                         .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
@@ -497,9 +501,9 @@ struct DayDetailView: View {
                                 
                             }
                             
-                            
+                            )
                         }
-                        .padding()
+                        .padding(10.0)
                         .onTapGesture(count: 2) { // Double-tap gesture
                             // Handle item deletion here
                             day.items.remove(at: index)
@@ -509,8 +513,8 @@ struct DayDetailView: View {
                             // Handle item deletion here
                             editExercise(at: index)
                         }
-                        Divider()
-                            .background(Color(red: 160/255, green: 160/255, blue: 160/255))
+                        
+                            
                     }
                     
                 }

@@ -124,32 +124,36 @@ struct TodayView: View {
         Group {
             if let todayTasks = weekData.days.first(where: { $0.name == getCurrentDay() }), !todayTasks.items.isEmpty, done < 1 {
                 ScrollView {
-                    LazyVStack(spacing: 10) {
+                    LazyVStack(spacing: 5) {
                         ForEach(Array(todayTasks.items.enumerated()), id: \.element.id) { index, uniqueItem in
-                            VStack {
-                                HStack(spacing: 20) {
-                                    Circle()
-                                        .foregroundColor(Color(red: 0.07, green: 0.69, blue: 0.951))
-                                        .frame(width: 50, height: 40)
-                                        .shadow(radius: 5)
-                                        .opacity(0.5)
-                                    Text(uniqueItem.value)
-                                        .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
-                                        .font(.system(size: 20))
-                                    Spacer()
-                                }
+                            // Wrap each task in a RoundedRectangle
+                            Spacer()
+                            RoundedRectangle(cornerRadius: 10) // Adjust cornerRadius as needed
+                                .fill(Color(hue: 1.0, saturation: 0.0, brightness: 0.908)) // Use any color that fits your design
+                                .frame(height: 70) // Adjust height as needed
+                                .shadow(radius: 5) // Adjust shadow radius as needed
+                                .overlay(
+                                    HStack(spacing: 20) {
+                                        Circle()
+                                            .foregroundColor(Color(red: 0.07, green: 0.69, blue: 0.951))
+                                            .frame(width: 45.0, height: 45.0) // Adjust the size of the circle as needed
+                                            .opacity(0.5)
+                                        Text(uniqueItem.value)
+                                            .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
+                                            .font(.system(size: 20))
+                                        Spacer()
+                                    }
+                                    .padding(.horizontal) // Add some horizontal padding inside the RoundedRectangle
+                                )
                                 .onTapGesture {
                                     selectedExerciseIndex = index
                                     showingExerciseView = true
                                 }
                                 .sheet(isPresented: $showingExerciseView) {
-                                    if let index = selectedExerciseIndex {
-                                        Exercise(exerciseIndex: index)
-                                    }
+                                    Exercise(exerciseIndex: selectedExerciseIndex ?? 0)
+                                        .environmentObject(weekData)
+                                        .environmentObject(WorkoutData())
                                 }
-                                .padding()
-                                Divider()
-                            }
                         }
                     }
                     .padding(.horizontal)
@@ -157,7 +161,7 @@ struct TodayView: View {
                 .border(Color.gray, width: 0.2)
             } else {
                 VStack {
-                    Image("Image") // Make sure you have this image in your assets
+                    Image("Image")
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 380, height: 380)
@@ -167,17 +171,18 @@ struct TodayView: View {
                         .foregroundColor(Color(red: 0.067, green: 0.69, blue: 0.951))
                         .bold()
                 }
-                // This VStack won't be in a ScrollView and won't have a border
             }
         }
     }
+
+
 
 
     private var startWorkoutButton: some View {
         Group {
             if let todayTasks = weekData.days.first(where: { $0.name == getCurrentDay() }), !todayTasks.items.isEmpty, done < 1 {
                 // Only show the "Start Workout" button if there are workouts for today
-                NavigationLink(destination: WorkoutDetails()) {
+                NavigationLink(destination: WorkoutDetails().environmentObject(weekData).environmentObject(WorkoutData())) {
                     ZStack {
                         VStack{
                   
