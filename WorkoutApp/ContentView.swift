@@ -10,7 +10,8 @@ import SwiftUI
 struct ContentView: View {
     @State private var selectedTab = 0
     @EnvironmentObject var weekData: WeekData
-    @State private var done = UserDefaults.standard.integer(forKey: "doneKey")
+    @EnvironmentObject var workoutData: WorkoutData // Access WorkoutData from the environment
+
     @State private var currentDate = UserDefaults.standard.string(forKey: "currentDateKey") ?? ""
     var body: some View {
         NavigationView {
@@ -48,15 +49,6 @@ struct ContentView: View {
             .foregroundColor(Color(red: 1.0, green: 0.677, blue: 0.215))
         }
         .onAppear {
-            if currentDate != getCurrentDay() {
-                          // If the stored date is different from the current day, reset 'done' to 0
-                            done = 0
-                          UserDefaults.standard.set(0, forKey: "doneKey")
-                          
-                          // Update the stored date to the current day
-                          UserDefaults.standard.set(getCurrentDay(), forKey: "currentDateKey")
-                          self.currentDate = getCurrentDay()
-                      }
             UITabBar.appearance().unselectedItemTintColor = .darkGray
             UITabBar.appearance().backgroundColor = UIColor(red: 217/255, green: 217/255, blue: 217/255, alpha: 0.9)
         }
@@ -71,10 +63,10 @@ struct ContentView: View {
 
 struct TodayView: View {
     @EnvironmentObject var weekData: WeekData
+    @EnvironmentObject var workoutData: WorkoutData // Access WorkoutData from the environment
     @State private var showingAddView = false
     @State private var showingExerciseView = false
     @State private var selectedExerciseIndex: Int?
-    @State private var done = UserDefaults.standard.integer(forKey: "doneKey")
 
     var body: some View {
         ZStack {
@@ -82,8 +74,25 @@ struct TodayView: View {
             VStack {
                 welcomeSection
                 dayTitle
-                workoutsList
-                startWorkoutButton
+            
+                // Check the value of workoutData.done
+                if workoutData.done == 2 {
+                    // Show an image when workoutData.done equals 2
+                    Image("Image") // Make sure to replace "YourImage" with the actual name of your image in the asset catalog
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 300, height: 300)
+                    Text("Great Job! You CRUSHED It Today.")
+                        .font(.title)
+                        .multilineTextAlignment(.center)
+                        .bold()
+                        .foregroundColor(Color(red: 0.067, green: 0.69, blue: 0.951))
+                } else {
+                    // Otherwise, show today's tasks
+                    workoutsList
+                    startWorkoutButton
+                }
+
                 Spacer()
             }
         }
@@ -122,7 +131,7 @@ struct TodayView: View {
 
     private var workoutsList: some View {
         Group {
-            if let todayTasks = weekData.days.first(where: { $0.name == getCurrentDay() }), !todayTasks.items.isEmpty, done < 1 {
+            if let todayTasks = weekData.days.first(where: { $0.name == getCurrentDay() }), !todayTasks.items.isEmpty {
                 ScrollView {
                     LazyVStack(spacing: 5) {
                         ForEach(Array(todayTasks.items.enumerated()), id: \.element.id) { index, uniqueItem in
@@ -175,12 +184,12 @@ struct TodayView: View {
         }
     }
 
-
+   
 
 
     private var startWorkoutButton: some View {
         Group {
-            if let todayTasks = weekData.days.first(where: { $0.name == getCurrentDay() }), !todayTasks.items.isEmpty, done < 1 {
+            if let todayTasks = weekData.days.first(where: { $0.name == getCurrentDay() }), !todayTasks.items.isEmpty{
                 // Only show the "Start Workout" button if there are workouts for today
                 NavigationLink(destination: WorkoutDetails().environmentObject(weekData).environmentObject(WorkoutData())) {
                     ZStack {
@@ -213,6 +222,13 @@ struct TodayView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView().environmentObject(WeekData.shared)
+        // Initialize your environment objects
+        let weekData = WeekData.shared
+        let workoutData = WorkoutData()
+
+        // Provide the environment objects to ContentView
+        ContentView()
+            .environmentObject(weekData)
+            .environmentObject(workoutData)
     }
 }

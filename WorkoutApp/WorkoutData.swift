@@ -9,9 +9,24 @@ import Foundation
 
 class WorkoutData: ObservableObject {
     @Published var exerciseWeights: [String: [Int]] = [:]
+    @Published var done: Int {
+        didSet {
+            UserDefaults.standard.set(done, forKey: "done")
+        }
+    }
+
+    private var lastSavedDate: String? {
+        didSet {
+            UserDefaults.standard.set(lastSavedDate, forKey: "lastSavedDate")
+        }
+    }
 
     init() {
+        self.done = UserDefaults.standard.integer(forKey: "done")
+        self.lastSavedDate = UserDefaults.standard.string(forKey: "lastSavedDate")
+
         loadWeights()
+        resetDoneIfNeeded()
     }
 
     func loadWeights() {
@@ -32,6 +47,17 @@ class WorkoutData: ObservableObject {
             UserDefaults.standard.set(jsonString, forKey: "exerciseWeights")
         } catch {
             print("Error saving weights to UserDefaults:", error)
+        }
+    }
+
+    private func resetDoneIfNeeded() {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let today = dateFormatter.string(from: Date())
+
+        if lastSavedDate != today {
+            done = 0 // Reset done to zero if the day has changed
+            lastSavedDate = today // Update lastSavedDate to today
         }
     }
 }

@@ -10,12 +10,11 @@ struct WorkoutDetails: View {
     @ObservedObject var weekData = WeekData.shared
     @EnvironmentObject var workoutData: WorkoutData // Use shared data model
     @State private var currentIndex: Int = UserDefaults.standard.integer(forKey: "WorkoutDetailsCurrentIndex")
-      @State private var currentSetIndex: Int = UserDefaults.standard.integer(forKey: "WorkoutDetailsCurrentSetIndex")
+    @State private var currentSetIndex: Int = UserDefaults.standard.integer(forKey: "WorkoutDetailsCurrentSetIndex")
     @State private var inputWeight = ""
     @Environment(\.presentationMode) var presentationMode
-    @State private var done = UserDefaults.standard.integer(forKey: "doneKey")
     @State private var errorMessage: String = ""
- 
+
     func getCurrentDay() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "EEEE"
@@ -32,19 +31,30 @@ struct WorkoutDetails: View {
            let numberSets = todayWorkout.items[currentIndex].numberSets {
             let exerciseName = todayWorkout.items[currentIndex].value
             workoutData.exerciseWeights[exerciseName, default: []].append(weight)
-
+            
             workoutData.saveWeights()
-
+            workoutData.done = 1
             if currentSetIndex + 1 < numberSets {
                 currentSetIndex += 1
             } else {
-                currentSetIndex = 0
-                currentIndex = (currentIndex + 1) % todayWorkout.items.count
+                if currentIndex + 1 < todayWorkout.items.count {
+                    currentSetIndex = 0
+                    currentIndex += 1
+                } else {
+                    // No more exercises left, mark workout as done
+                    workoutData.done = 2
+                    workoutData.saveWeights() // Make sure to implement saving done in saveWeights or a separate method
+               
+                        self.presentationMode.wrappedValue.dismiss()
+                    
+                }
             }
+
             inputWeight = "" // Clear inputWeight after advancing set or exercise
             errorMessage = "" // Clear error message
         }
     }
+
 
 
     
@@ -176,9 +186,14 @@ struct WorkoutDetails: View {
 
     }
     func loadState() {
-        // Load the current index and set index when the view appears
-        currentIndex = UserDefaults.standard.integer(forKey: "WorkoutDetailsCurrentIndex")
-        currentSetIndex = UserDefaults.standard.integer(forKey: "WorkoutDetailsCurrentSetIndex")
+        if workoutData.done == 1{
+            // Load the current index and set index when the view appears
+            currentIndex = UserDefaults.standard.integer(forKey: "WorkoutDetailsCurrentIndex")
+            currentSetIndex = UserDefaults.standard.integer(forKey: "WorkoutDetailsCurrentSetIndex")
+        } else {
+            currentIndex = 0
+            currentSetIndex = 0
+        }
         
         // Load the saved weights for the current exercise
         if weekData.days.indices.contains(currentIndex) {
