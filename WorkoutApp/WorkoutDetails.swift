@@ -93,8 +93,7 @@ struct WorkoutDetails: View {
                                     .multilineTextAlignment(.center)
                                     .bold()
                                     .foregroundColor(Color(hue: 1.0, saturation: 0.0, brightness: 0.199))
-                                
-                                
+
                                 ZStack(alignment: .bottom){
                                     Spacer()
                                     RoundedRectangle(cornerRadius: 50)
@@ -103,7 +102,6 @@ struct WorkoutDetails: View {
                                         .shadow(radius: 20)
                                         .overlay(
                                             VStack(spacing: 10) {
-                                                // Check if the current exercise has number of sets and reps defined
                                                 if let numberSets = todayWorkout.items[currentIndex].numberSets,
                                                    let numberReps = todayWorkout.items[currentIndex].numberReps {
                                                     Text("You Have \(numberSets) Sets Of \(numberReps) Reps")
@@ -111,7 +109,26 @@ struct WorkoutDetails: View {
                                                         .foregroundColor(Color(red: 217/255, green: 217/255, blue: 217/255))
                                                         .bold()
                                                         .padding()
-                                                    
+                                                } else if let time = todayWorkout.items[currentIndex].time {
+                                                    VStack(spacing: 300){
+                                                        Text("For \(time) Minutes")
+                                                            .font(.title)
+                                                            .foregroundColor(Color(red: 217/255, green: 217/255, blue: 217/255))
+                                                            .bold()
+                                                            .padding(.bottom)
+                                                        Button("Save & Next Set") {
+                                                            advanceSet()
+                                                            
+                                                        }
+                                                        
+                                                       
+                                                        .padding()
+                                                        .background(LinearGradient(gradient: Gradient(colors: [Color(red: 0.067, green: 0.69, blue: 0.951), Color(hue: 1.0, saturation: 0.251, brightness: 0.675)]), startPoint: .topLeading, endPoint: .bottomTrailing))
+                                                        .foregroundColor(.white)
+                                                        .cornerRadius(10)
+                                                    }
+                                                }
+                                                if todayWorkout.items[currentIndex].numberSets != nil {
                                                     let exerciseName = todayWorkout.items[currentIndex].value
                                                     let weights = workoutData.exerciseWeights[exerciseName] ?? [] // Use workoutData.exerciseWeights
                                                     let personalBest = weights.max() ?? 0 // Find the maximum weight, or 0 if not available
@@ -128,38 +145,36 @@ struct WorkoutDetails: View {
                                                         .font(.headline)
                                                         .foregroundColor(Color(red: 217/255, green: 217/255, blue: 217/255))
                                                         .padding(.top, 2)
+                                                    
+                                                    
+                                                    RectangleWithText(text: "Set \(currentSetIndex + 1) of \(todayWorkout.items[currentIndex].numberSets ?? 0)", inputWeight: $inputWeight)
+                                                        .padding(.top, 40)
+                                                    
+                                                    Spacer()
+                                                    
+                                                    Text(errorMessage)
+                                                        .foregroundColor(.red)
+                                                        .font(.system(size: 14))
+                                                    
+                                                    Button("Save & Next Set") {
+                                                        advanceSet()
+                                                    }
+                                                    .padding()
+                                                    .background(LinearGradient(gradient: Gradient(colors: [Color(red: 0.067, green: 0.69, blue: 0.951), Color(hue: 1.0, saturation: 0.251, brightness: 0.675)]), startPoint: .topLeading, endPoint: .bottomTrailing))
+                                                    .foregroundColor(.white)
+                                                    .cornerRadius(10)
                                                 }
-
-                                                
-                                                
-                                                RectangleWithText(text: "Set \(currentSetIndex + 1) of \(todayWorkout.items[currentIndex].numberSets ?? 0)", inputWeight: $inputWeight)
-                                                    .padding(.top, 40)
-                                                Spacer()
-                                                Spacer()
-                                                Text(errorMessage)
-                                                    .foregroundColor(.red)
-                                                    .font(.system(size: 14))
-                                                Button("Save & Next Set") {
-                                                    advanceSet()
-                                                }
-                                                .padding()
-                                                .background(LinearGradient(gradient: Gradient(colors: [Color(red: 0.067, green: 0.69, blue: 0.951), Color(hue: 1.0, saturation: 0.251, brightness: 0.675)]), startPoint: .topLeading, endPoint: .bottomTrailing))
-                                                .foregroundColor(.white)
-                                                .cornerRadius(10)
-                                              
-
-                                                Spacer()
                                             }
-                                                .padding(.top)
+                                            .padding(.top)
                                         )
                                 }
                                 .padding(.top, 75.0)
-                              
                             }
                         } else {
                             Text("No workout for today")
                                 .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
                         }
+
                     }
                     .padding(.bottom, -90)
                 }

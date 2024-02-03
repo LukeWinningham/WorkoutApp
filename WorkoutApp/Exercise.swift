@@ -6,6 +6,9 @@
 //
 import SwiftUI
 import Combine
+import Charts // Import the chart library
+
+
 
 struct Exercise: View {
     @ObservedObject var weekData = WeekData.shared
@@ -22,11 +25,36 @@ struct Exercise: View {
         }
     }
 
+    var highestWeight: Double {
+        if let todayWorkout = weekData.days.first(where: { $0.name == getCurrentDay() }),
+           todayWorkout.items.indices.contains(exerciseIndex) {
+            let exerciseName = todayWorkout.items[exerciseIndex].value
+            let exerciseWeights = workoutData.exerciseWeights[exerciseName] ?? []
+            return Double(exerciseWeights.max() ?? 0)
+        }
+        return 0
+    }
+    var hasRepsOrIsTimeBased: Bool {
+        if let todayWorkout = weekData.days.first(where: { $0.name == getCurrentDay() }),
+           todayWorkout.items.indices.contains(exerciseIndex) {
+            return todayWorkout.items[exerciseIndex].numberReps != nil
+        }
+        return false
+    }
     var body: some View {
         ZStack(alignment: .bottom) {
             Color(red: 217/255, green: 217/255, blue: 217/255).edgesIgnoringSafeArea(.all)
 
             VStack {
+                WeightChart()
+                    .padding(.top, 20.0)
+
+
+            
+         
+            
+
+            
                 Spacer()
                 if let todayWorkout = weekData.days.first(where: { $0.name == getCurrentDay() }),
                    todayWorkout.items.indices.contains(exerciseIndex) {
@@ -36,27 +64,30 @@ struct Exercise: View {
                     let lastThreeWeights = exerciseWeights.suffix(3)
 
                     RoundedRectangle(cornerRadius: 50)
-                        .fill(LinearGradient(gradient: Gradient(colors: [Color(red: 0.067, green: 0.69, blue: 0.951), Color(hue: 1.0, saturation: 0.251, brightness: 0.675)]), startPoint: .topLeading, endPoint: .bottomTrailing))
-                        .frame(width: 440.0, height: 580)
-                        .shadow(radius: 20)
-                        .overlay(
-                            VStack(spacing: 15) {
-                                ExerciseDetails(todayWorkout: todayWorkout, exerciseIndex: exerciseIndex)
-                                PersonalBestText(personalBest: personalBest)
-                                LastThreeSetsText(lastThreeWeights: lastThreeWeights)
-                                
-                                TextField("Description", text: $newDes)
-                                    .foregroundColor(.white)
-                                    .padding(.leading, 50)
-                                    .padding(.top, 30)
-                                    .onReceive(Just(newDes)) { _ in
-                                        saveDescription()
-                                    }
+                                    .fill(LinearGradient(gradient: Gradient(colors: [Color(red: 0.067, green: 0.69, blue: 0.951), Color(hue: 1.0, saturation: 0.251, brightness: 0.675)]), startPoint: .topLeading, endPoint: .bottomTrailing))
+                                    .frame(width: 440.0, height: 580)
+                                    .shadow(radius: 20)
+                                    .overlay(
+                                        VStack(spacing: 15) {
+                                            ExerciseDetails(todayWorkout: todayWorkout, exerciseIndex: exerciseIndex)
 
-                                Spacer()
-                            }
-                        )
-                        .padding(.bottom, -60)
+                                            if hasRepsOrIsTimeBased {
+                                                PersonalBestText(personalBest: personalBest)
+                                                LastThreeSetsText(lastThreeWeights: lastThreeWeights)
+                                            }
+
+                                            TextField("Description", text: $newDes)
+                                                .foregroundColor(.white)
+                                                .padding(.leading, 50)
+                                                .padding(.top, 30)
+                                                .onReceive(Just(newDes)) { _ in
+                                                    saveDescription()
+                                                }
+
+                                            Spacer()
+                                        }
+                                    )
+                                    .padding(.bottom, -60)
                 } else {
                     Text("Exercise Not Found")
                         .font(.largeTitle)

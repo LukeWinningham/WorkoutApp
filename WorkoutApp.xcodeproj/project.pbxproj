@@ -8,10 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		D387C4322B6B4A0A0064835E /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = D387C4312B6B4A0A0064835E /* Exercise.swift */; };
+		D39750E12B6E46130005280F /* Charts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D39750E02B6E46130005280F /* Charts.framework */; };
+		D39750E32B6E53320005280F /* MonthlyHoursOfSunshine.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39750E22B6E53320005280F /* MonthlyHoursOfSunshine.swift */; };
 		D3DAD1D72B6DF496000C1D94 /* WorkoutData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3DAD1D62B6DF496000C1D94 /* WorkoutData.swift */; };
 		D3DEC3E22B69918400C57844 /* SwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3DEC3E12B69918400C57844 /* SwiftUIView.swift */; };
 		D3EA0B0B2B6A281000BA4852 /* WorkoutDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3EA0B0A2B6A281000BA4852 /* WorkoutDetails.swift */; };
-		D3EA0B0D2B6A3FE000BA4852 /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D3EA0B0C2B6A3FE000BA4852 /* Storyboard.storyboard */; };
 		D3FF6F5A2B68770C00AE6725 /* WorkoutAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3FF6F592B68770C00AE6725 /* WorkoutAppApp.swift */; };
 		D3FF6F5C2B68770C00AE6725 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3FF6F5B2B68770C00AE6725 /* ContentView.swift */; };
 		D3FF6F612B68770E00AE6725 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D3FF6F602B68770E00AE6725 /* Preview Assets.xcassets */; };
@@ -39,10 +40,11 @@
 
 /* Begin PBXFileReference section */
 		D387C4312B6B4A0A0064835E /* Exercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exercise.swift; sourceTree = "<group>"; };
+		D39750E02B6E46130005280F /* Charts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Charts.framework; path = System/Library/Frameworks/Charts.framework; sourceTree = SDKROOT; };
+		D39750E22B6E53320005280F /* MonthlyHoursOfSunshine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthlyHoursOfSunshine.swift; sourceTree = "<group>"; };
 		D3DAD1D62B6DF496000C1D94 /* WorkoutData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutData.swift; sourceTree = "<group>"; };
 		D3DEC3E12B69918400C57844 /* SwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIView.swift; sourceTree = "<group>"; };
 		D3EA0B0A2B6A281000BA4852 /* WorkoutDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutDetails.swift; sourceTree = "<group>"; };
-		D3EA0B0C2B6A3FE000BA4852 /* Storyboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
 		D3FF6F562B68770C00AE6725 /* WorkoutApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WorkoutApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3FF6F592B68770C00AE6725 /* WorkoutAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutAppApp.swift; sourceTree = "<group>"; };
 		D3FF6F5B2B68770C00AE6725 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -59,6 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D39750E12B6E46130005280F /* Charts.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,6 +82,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D39750DF2B6E46130005280F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D39750E02B6E46130005280F /* Charts.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		D3FF6F4D2B68770C00AE6725 = {
 			isa = PBXGroup;
 			children = (
@@ -86,6 +97,7 @@
 				D3FF6F692B68770E00AE6725 /* WorkoutAppTests */,
 				D3FF6F732B68770E00AE6725 /* WorkoutAppUITests */,
 				D3FF6F572B68770C00AE6725 /* Products */,
+				D39750DF2B6E46130005280F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -108,8 +120,8 @@
 				D3EA0B0A2B6A281000BA4852 /* WorkoutDetails.swift */,
 				D387C4312B6B4A0A0064835E /* Exercise.swift */,
 				D3FF6F5F2B68770E00AE6725 /* Preview Content */,
-				D3EA0B0C2B6A3FE000BA4852 /* Storyboard.storyboard */,
 				D3DAD1D62B6DF496000C1D94 /* WorkoutData.swift */,
+				D39750E22B6E53320005280F /* MonthlyHoursOfSunshine.swift */,
 			);
 			path = WorkoutApp;
 			sourceTree = "<group>";
@@ -244,7 +256,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D3FF6F612B68770E00AE6725 /* Preview Assets.xcassets in Resources */,
-				D3EA0B0D2B6A3FE000BA4852 /* Storyboard.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -272,6 +283,7 @@
 				D387C4322B6B4A0A0064835E /* Exercise.swift in Sources */,
 				D3EA0B0B2B6A281000BA4852 /* WorkoutDetails.swift in Sources */,
 				D3FF6F5C2B68770C00AE6725 /* ContentView.swift in Sources */,
+				D39750E32B6E53320005280F /* MonthlyHoursOfSunshine.swift in Sources */,
 				D3FF6F5A2B68770C00AE6725 /* WorkoutAppApp.swift in Sources */,
 				D3DEC3E22B69918400C57844 /* SwiftUIView.swift in Sources */,
 				D3DAD1D72B6DF496000C1D94 /* WorkoutData.swift in Sources */,
@@ -439,7 +451,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"WorkoutApp/Preview Content\"";
-				DEVELOPMENT_TEAM = Y73R3BV6W5;
+				DEVELOPMENT_TEAM = SB7H664UEC;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -469,7 +481,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"WorkoutApp/Preview Content\"";
-				DEVELOPMENT_TEAM = Y73R3BV6W5;
+				DEVELOPMENT_TEAM = SB7H664UEC;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

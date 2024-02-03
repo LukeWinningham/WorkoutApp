@@ -120,6 +120,7 @@ class Day: Identifiable, ObservableObject, Codable {
     let id: UUID
     var name: String
     @Published var items: [UniqueItem]
+  
 
     enum CodingKeys: CodingKey {
         case id, name, items
@@ -264,7 +265,8 @@ struct DayDetailView: View {
     @State private var isKeyboardVisible = false
     @State private var timeText: String = "" // Add this line to keep track of the time input
     @State private var errorMessage: String = ""
-    
+
+
     var body: some View {
         ZStack {
             // Tap gesture added to this Color view
@@ -319,7 +321,8 @@ struct DayDetailView: View {
         VStack {
             
             VStack(spacing: 10) {
-                
+          
+            
                 CustomTextField(placeholder: "Name of Exercise", text: $newItem, placeholderTextColor: UIColor.lightGray)
                     .padding()
                     .background(Color.white)

@@ -14,6 +14,7 @@ struct WorkoutAppApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView() // Initialize ContentView
+            
                 .environmentObject(WeekData.shared) // Inject WeekData.shared as an Environment Object
                 .environmentObject(workoutData) // Provide it to your views
 
