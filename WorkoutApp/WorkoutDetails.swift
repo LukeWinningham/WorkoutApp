@@ -22,38 +22,57 @@ struct WorkoutDetails: View {
     }
 
     func advanceSet() {
-        guard let weight = Int(inputWeight), weight > 0, weight < 9999 else {
-            errorMessage = "Please Enter A Valid Weight"
+        // Define todayWorkout at the beginning of the function to ensure it is in scope throughout
+        guard let todayWorkout = weekData.days.first(where: { $0.name == getCurrentDay() }) else {
+            errorMessage = "Could not find today's workout"
             return
         }
 
-        if let todayWorkout = weekData.days.first(where: { $0.name == getCurrentDay() }),
-           let numberSets = todayWorkout.items[currentIndex].numberSets {
-            let exerciseName = todayWorkout.items[currentIndex].value
-            workoutData.exerciseWeights[exerciseName, default: []].append(weight)
-            
-            workoutData.saveWeights()
-            workoutData.done = 1
-            if currentSetIndex + 1 < numberSets {
-                currentSetIndex += 1
+        // Check if the current exercise is a timed one and handle it separately
+        if todayWorkout.items[currentIndex].time != nil {
+            // Handle the advancement for a timed exercise
+            if currentIndex + 1 < todayWorkout.items.count {
+                currentIndex += 1 // Move to the next exercise
+                currentSetIndex = 0 // Reset the set index for the new exercise
             } else {
-                if currentIndex + 1 < todayWorkout.items.count {
-                    currentSetIndex = 0
-                    currentIndex += 1
-                } else {
-                    // No more exercises left, mark workout as done
-                    workoutData.done = 2
-                    workoutData.saveWeights() // Make sure to implement saving done in saveWeights or a separate method
-               
-                        self.presentationMode.wrappedValue.dismiss()
-                    
-                }
+                // No more exercises left, mark workout as done
+                workoutData.done = 2
+                workoutData.saveWeights() // Make sure to implement saving done in saveWeights or a separate method
+                self.presentationMode.wrappedValue.dismiss()
+            }
+        } else {
+            // Proceed with the original guard condition for non-timed exercises
+            guard let weight = Int(inputWeight), weight > 0, weight < 9999 else {
+                errorMessage = "Please Enter A Valid Weight"
+                return
             }
 
-            inputWeight = "" // Clear inputWeight after advancing set or exercise
-            errorMessage = "" // Clear error message
+            if let numberSets = todayWorkout.items[currentIndex].numberSets {
+                let exerciseName = todayWorkout.items[currentIndex].value
+                workoutData.exerciseWeights[exerciseName, default: []].append(weight)
+                
+                workoutData.saveWeights()
+                workoutData.done = 1
+                if currentSetIndex + 1 < numberSets {
+                    currentSetIndex += 1
+                } else {
+                    if currentIndex + 1 < todayWorkout.items.count {
+                        currentSetIndex = 0
+                        currentIndex += 1
+                    } else {
+                        // No more exercises left, mark workout as done
+                        workoutData.done = 2
+                        workoutData.saveWeights()
+                        self.presentationMode.wrappedValue.dismiss()
+                    }
+                }
+            }
         }
+
+        inputWeight = "" // Clear inputWeight after advancing set or exercise
+        errorMessage = "" // Clear error message
     }
+
 
 
 
@@ -102,6 +121,7 @@ struct WorkoutDetails: View {
                                         .shadow(radius: 20)
                                         .overlay(
                                             VStack(spacing: 10) {
+                                                
                                                 if let numberSets = todayWorkout.items[currentIndex].numberSets,
                                                    let numberReps = todayWorkout.items[currentIndex].numberReps {
                                                     Text("You Have \(numberSets) Sets Of \(numberReps) Reps")
@@ -151,11 +171,11 @@ struct WorkoutDetails: View {
                                                         .padding(.top, 40)
                                                     
                                                     Spacer()
-                                                    
+                                                    Spacer()
                                                     Text(errorMessage)
                                                         .foregroundColor(.red)
                                                         .font(.system(size: 14))
-                                                    
+                                                  
                                                     Button("Save & Next Set") {
                                                         advanceSet()
                                                     }
@@ -164,8 +184,9 @@ struct WorkoutDetails: View {
                                                     .foregroundColor(.white)
                                                     .cornerRadius(10)
                                                 }
+                                                Spacer()
                                             }
-                                            .padding(.top)
+                                          
                                         )
                                 }
                                 .padding(.top, 75.0)
