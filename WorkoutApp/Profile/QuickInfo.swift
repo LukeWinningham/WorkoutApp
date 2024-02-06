@@ -1,18 +1,18 @@
 //
-//  NavigationState.swift
+//  QuickInfo.swift
 //  WorkoutApp
 //
-//  Created by Luke Winningham on 2/5/24.
+//  Created by Luke Winningham on 2/6/24.
 //
 
 import SwiftUI
 
-struct NavigationState: View {
+struct QuickInfo: View {
     var body: some View {
         Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
     }
 }
 
 #Preview {
-    NavigationState()
+    QuickInfo()
 }
