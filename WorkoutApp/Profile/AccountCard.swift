@@ -66,6 +66,7 @@ struct AccountCard: View {
                                     Text("Workout")
                                         .font(.title2)
                                         .foregroundColor(Color.gray)
+                                        .multilineTextAlignment(.center)
                                     Text("Progress")
                                         .font(.title2)
                                         .foregroundColor(Color.gray)

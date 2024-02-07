@@ -29,7 +29,7 @@ struct Other: View {
                             HStack{
                                 Image(systemName: "envelope") // Use your own image or system image name
                                     .foregroundColor(Color(red: 1.0, green: 0.677, blue: 0.215))
-                                    .padding( .leading, 10.0)
+                                    .padding( .leading, 7.0)
                                 Text("Contact Us")
                                     .font(.headline)
                                     .bold()
@@ -58,7 +58,7 @@ struct Other: View {
                             HStack{
                                 Image(systemName: "gear") // Use your own image or system image name
                                     .foregroundColor(Color(red: 1.0, green: 0.677, blue: 0.215))
-                                    .padding( .leading, 10.0)
+                                    .padding( .leading, 11)
                                 Text("Settings")
                                     .font(.headline)
                                     .bold()

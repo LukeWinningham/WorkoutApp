@@ -3,7 +3,7 @@
 //  WorkoutApp
 //
 //  Created by Luke Winningham on 2/6/24.
-//import SwiftUI
+
 import AuthenticationServices
 import SwiftUI
 import Combine
@@ -54,7 +54,8 @@ final class Coordinator: NSObject, ASAuthorizationControllerDelegate, ASAuthoriz
         // Coordinator definition remains the same
         
 struct SignInWithAppleButtonView: View {
-    @ObservedObject var authViewModel: AuthViewModel
+    @EnvironmentObject var authViewModel: AuthViewModel // Use the shared instance from the environment
+
     
     var body: some View {
         SignInWithAppleButton(
@@ -88,16 +89,16 @@ struct SignInWithAppleButtonView: View {
     }
 }
 
-        
 struct LogOn: View {
-    @StateObject private var authViewModel = AuthViewModel()
+    @EnvironmentObject var authViewModel: AuthViewModel // Use the shared instance from the environment
 
     var body: some View {
         ZStack {
             LinearGradient(gradient: Gradient(colors: [Color(red: 0.067, green: 0.69, blue: 0.951), Color(hue: 1.0, saturation: 0.251, brightness: 0.675)]), startPoint: .topLeading, endPoint: .bottomTrailing)
                 .edgesIgnoringSafeArea(.all)
             VStack {
-                SignInWithAppleButtonView(authViewModel: authViewModel)
+                SignInWithAppleButtonView()
+                    .environmentObject(authViewModel) // Pass the shared AuthViewModel instance
                     .frame(width: 280, height: 45)
             }
         }
@@ -105,8 +106,10 @@ struct LogOn: View {
 }
 
 
+
 struct LogOn_Previews: PreviewProvider {
     static var previews: some View {
         LogOn()
+            .environmentObject(AuthViewModel())
     }
 }
