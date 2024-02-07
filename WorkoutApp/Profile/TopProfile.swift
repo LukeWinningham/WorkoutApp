@@ -6,13 +6,75 @@
 //
 
 import SwiftUI
+import Combine
 
 struct TopProfile: View {
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        HStack {
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color.clear) // Use any color that fits your design
+                .frame(height: 70) // Adjust height as needed
+            
+                .overlay(
+                    HStack(spacing: 20) {
+                        // Use ZStack to overlay the image on the circle
+                        ZStack {
+                            Circle()
+                                .foregroundColor(Color(red: 0.07, green: 0.69, blue: 0.951))
+                                .frame(width: 95.0, height: 95.0) // Adjust the size of the circle as needed
+                                .opacity(0.5)
+                            
+                            // Replace "person.fill" with your actual image name
+                            Image("me")
+                                .resizable() // Make the image resizable
+                            
+                                .aspectRatio(contentMode: .fill) // Fill the frame while preserving aspect ratio
+                                .frame(width: 105.0, height: 105.0) // Match the circle's size
+                                .clipShape(Circle()) // Clip the image to a circular shape
+                                .shadow(radius: 5)
+                        }
+                        .padding(.leading, 5)
+                        
+                        VStack(alignment: .leading){
+                            Spacer()
+                            Text("Luke")
+                                .font(.title2)
+                                .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
+                                .bold()
+                            
+                                .bold()
+                                .padding(.trailing)
+                            Text("Currently Cutting")
+                                .foregroundColor(.gray)
+                                .font(.subheadline)
+                            Spacer()
+                            HStack{
+                                Image(systemName: "flame.fill") // Use your own image or system image name
+                                Text("32")
+                            }
+                        }
+                        
+                        Spacer()
+                        
+
+                    }
+                    
+                    // Add some horizontal padding inside the overlay
+                )
+            
+        }
+        .padding(.horizontal, 10.0)
     }
 }
 
-#Preview {
-    TopProfile()
+// Correct way to define a preview provider for your SwiftUI view
+struct TopProfile_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationView {
+            TopProfile()
+                .environmentObject(WeekData.shared)
+                .environmentObject(WorkoutData())
+        }
+    }
 }

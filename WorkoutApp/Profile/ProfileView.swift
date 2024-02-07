@@ -6,13 +6,50 @@
 //
 
 import SwiftUI
+import Combine
 
 struct ProfileView: View {
+    @EnvironmentObject var weekData: WeekData
+    @EnvironmentObject var workoutData: WorkoutData
+    @State private var showingAddView = false
+    @State private var showingExerciseView = false
+    @State private var selectedExerciseIndex: Int?
+    @Environment(\.presentationMode) var presentationMode
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ZStack(alignment: .top) { // Align content to the top
+            Color(red: 217/255, green: 217/255, blue: 217/255).edgesIgnoringSafeArea(.all)
+
+            VStack(spacing: 0) { // Use VStack to place the border right below the image
+                Image("background") // Ensure you have an image named "background" in your assets
+                    .resizable()
+                    .aspectRatio(contentMode: .fill) // Fill the frame while preserving aspect ratio
+                    .frame(width: UIScreen.main.bounds.width, height: 180) // Use the screen width for the image
+                    .clipShape(RoundedRectangle(cornerRadius: 0)) // You may not need a corner radius here
+
+                Rectangle() // This creates the border line
+                    .fill(Color.black) // Set the border color here
+                    .frame(height: 2) // Set the border thickness here
+            }
+            .edgesIgnoringSafeArea(.top) // Allow the image and border to extend to the top edge of the screen
+
+            VStack(spacing: 30.0) {
+                Spacer().frame(height: 90) // Adjust this height to move the content barely below the image
+
+                TopProfile()
+                QuickInfo()
+                AccountCard()
+                Other()
+            }
+        }
     }
 }
 
-#Preview {
-    ProfileView()
+struct Profile_Previews: PreviewProvider {
+    static var previews: some View {
+        ProfileView()
+            .environmentObject(WeekData.shared)
+            .environmentObject(WorkoutData())
+    }
 }
+
