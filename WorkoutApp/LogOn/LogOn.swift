@@ -7,17 +7,67 @@
 import AuthenticationServices
 import SwiftUI
 import Combine
-class AuthViewModel: ObservableObject {
-    @Published var isUserAuthenticated = false
+import CloudKit
 
-    func signIn() {
+class AuthViewModel: ObservableObject {
+    @Published var isUserAuthenticated = UserDefaults.standard.bool(forKey: "isUserSignedIn") {
+        didSet {
+            UserDefaults.standard.set(isUserAuthenticated, forKey: "isUserSignedIn")
+            if !isUserAuthenticated {
+                isProfileCompleted = false
+            }
+        }
+    }
+    @Published var isProfileCompleted = UserDefaults.standard.bool(forKey: "isProfileCompleted") {
+        didSet {
+            UserDefaults.standard.set(isProfileCompleted, forKey: "isProfileCompleted")
+        }
+    }
+    var userIdentifier: String?
+
+    init() {
+        if isUserAuthenticated {
+            checkProfileCompletion()
+        }
+    }
+
+    func signIn(userIdentifier: String) {
         self.isUserAuthenticated = true
+        self.userIdentifier = userIdentifier
+        checkProfileCompletion()
     }
 
     func signOut() {
         self.isUserAuthenticated = false
+        self.userIdentifier = nil
+    }
+
+    func completeProfile() {
+        self.isProfileCompleted = true
+    }
+
+    func checkProfileCompletion() {
+        guard let userIdentifier = self.userIdentifier, isUserAuthenticated else { return }
+
+        let container = CKContainer.default()
+        let database = container.publicCloudDatabase
+        let predicate = NSPredicate(format: "userIdentifier == %@", userIdentifier)
+        let query = CKQuery(recordType: "PersonalData", predicate: predicate)
+
+        database.fetch(withQuery: query, inZoneWith: nil, desiredKeys: nil, resultsLimit: 1) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let (records, _)):
+                    self.isProfileCompleted = !records.isEmpty
+                case .failure(let error):
+                    print("Failed to check profile completion: \(error)")
+                    self.isProfileCompleted = false
+                }
+            }
+        }
     }
 }
+
 
 final class Coordinator: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
     var authViewModel: AuthViewModel
@@ -27,13 +77,9 @@ final class Coordinator: NSObject, ASAuthorizationControllerDelegate, ASAuthoriz
     }
     
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
-        switch authorization.credential {
-        case let appleIDCredential as ASAuthorizationAppleIDCredential:
+        if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
             let userIdentifier = appleIDCredential.user
-            print("User ID: \(userIdentifier)")
-            authViewModel.signIn()
-        default:
-            break
+            authViewModel.signIn(userIdentifier: userIdentifier)
         }
     }
     
@@ -42,21 +88,16 @@ final class Coordinator: NSObject, ASAuthorizationControllerDelegate, ASAuthoriz
     }
     
     func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = windowScene.windows.first else {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene, let window = windowScene.windows.first else {
             fatalError("Unable to find a window scene for ASAuthorizationController")
         }
         return window
     }
 }
 
-        
-        // Coordinator definition remains the same
-        
 struct SignInWithAppleButtonView: View {
-    @EnvironmentObject var authViewModel: AuthViewModel // Use the shared instance from the environment
+    @EnvironmentObject var authViewModel: AuthViewModel
 
-    
     var body: some View {
         SignInWithAppleButton(
             .signIn,
@@ -66,50 +107,47 @@ struct SignInWithAppleButtonView: View {
             onCompletion: { result in
                 switch result {
                 case .success(let authorization):
-                    // Directly handle the authorization result here, without creating a new ASAuthorizationController
-                    switch authorization.credential {
-                    case let appleIDCredential as ASAuthorizationAppleIDCredential:
+                    if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
                         let userIdentifier = appleIDCredential.user
-                        print("User ID: \(userIdentifier)")
-                        // Here, call a method on your authViewModel to handle the successful sign in
-                        authViewModel.signIn()
-                        
-                    default:
-                        break
+                        authViewModel.signIn(userIdentifier: userIdentifier)
                     }
                 case .failure(let error):
                     print("Authorization failed: \(error.localizedDescription)")
-                    // Optionally, handle the error, e.g., by updating the UI or showing an error message
                 }
             }
         )
         .frame(height: 45)
         .signInWithAppleButtonStyle(.black)
-    
     }
 }
 
 struct LogOn: View {
-    @EnvironmentObject var authViewModel: AuthViewModel // Use the shared instance from the environment
+    @EnvironmentObject var authViewModel: AuthViewModel
 
     var body: some View {
         ZStack {
             LinearGradient(gradient: Gradient(colors: [Color(red: 0.067, green: 0.69, blue: 0.951), Color(hue: 1.0, saturation: 0.251, brightness: 0.675)]), startPoint: .topLeading, endPoint: .bottomTrailing)
                 .edgesIgnoringSafeArea(.all)
             VStack {
-                SignInWithAppleButtonView()
-                    .environmentObject(authViewModel) // Pass the shared AuthViewModel instance
-                    .frame(width: 280, height: 45)
+                if authViewModel.isUserAuthenticated {
+                    if !authViewModel.isProfileCompleted {
+                        PersonalData().environmentObject(authViewModel)
+                    } else {
+                        NavBar()
+                    }
+                } else {
+                    SignInWithAppleButtonView()
+                        .environmentObject(authViewModel)
+                        .frame(width: 280, height: 45)
+                }
             }
         }
     }
 }
 
-
-
 struct LogOn_Previews: PreviewProvider {
     static var previews: some View {
-        LogOn()
-            .environmentObject(AuthViewModel())
+        LogOn().environmentObject(AuthViewModel())
     }
 }
+
