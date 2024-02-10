@@ -17,7 +17,7 @@ struct WorkoutList: View {
     var body: some View {
         Group {
             if let todayTasks = weekData.days.first(where: { $0.name == getCurrentDay() }), !todayTasks.items.isEmpty {
-                List {
+                ScrollView {
                     LazyVStack(spacing: 5) {
                         ForEach(Array(todayTasks.items.enumerated()), id: \.element.id) { index, uniqueItem in
                             // Wrap each task in a RoundedRectangle
@@ -52,8 +52,7 @@ struct WorkoutList: View {
                     }
                     .padding(.horizontal)
                 }
-                .scrollContentBackground(.hidden)
-                .listRowBackground(Color.clear)
+                
 
                 .border(Color.gray, width: 0.2)
             } else {

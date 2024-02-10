@@ -21,7 +21,7 @@ struct TodayView: View {
             Color(red: 217/255, green: 217/255, blue: 217/255).edgesIgnoringSafeArea(.all)
             VStack {
                 welcomeSection
-                NameOfDay()
+                
             
                 // Check the value of workoutData.done
                 if workoutData.done == 2 {
@@ -36,6 +36,7 @@ struct TodayView: View {
                         .bold()
                         .foregroundColor(Color(red: 0.067, green: 0.69, blue: 0.951))
                 } else {
+                    NameOfDay()
                     // Otherwise, show today's tasks
                     WorkoutList()
                     StartButton()
