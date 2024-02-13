@@ -18,7 +18,8 @@ struct ProfileView: View {
 
     var body: some View {
         ZStack(alignment: .top) { // Align content to the top
-            Color(red: 217/255, green: 217/255, blue: 217/255).edgesIgnoringSafeArea(.all)
+            Color(red: 18/255, green: 18/255, blue: 18/255)
+                .edgesIgnoringSafeArea(.all)
 
             VStack(spacing: 0) { // Use VStack to place the border right below the image
                 Image("background") // Ensure you have an image named "background" in your assets
@@ -28,7 +29,7 @@ struct ProfileView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 0)) // You may not need a corner radius here
 
                 Rectangle() // This creates the border line
-                    .fill(Color.black) // Set the border color here
+                    .fill(Color(red: 41/255, green: 41/255, blue: 41/255)) // Set the border color here
                     .frame(height: 2) // Set the border thickness here
             }
             .edgesIgnoringSafeArea(.top) // Allow the image and border to extend to the top edge of the screen

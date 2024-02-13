@@ -18,29 +18,15 @@ struct TodayView: View {
 
     var body: some View {
         ZStack {
-            Color(red: 217/255, green: 217/255, blue: 217/255).edgesIgnoringSafeArea(.all)
+            Color(red: 18/255, green: 18/255, blue: 18/255)
+                .edgesIgnoringSafeArea(.all)
             VStack {
                 welcomeSection
-                
-            
-                // Check the value of workoutData.done
-                if workoutData.done == 2 {
-                    // Show an image when workoutData.done equals 2
-                    Image("Image") // Make sure to replace "YourImage" with the actual name of your image in the asset catalog
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 300, height: 300)
-                    Text("Great Job! You CRUSHED It Today.")
-                        .font(.title)
-                        .multilineTextAlignment(.center)
-                        .bold()
-                        .foregroundColor(Color(red: 0.067, green: 0.69, blue: 0.951))
-                } else {
                     NameOfDay()
                     // Otherwise, show today's tasks
                     WorkoutList()
                     StartButton()
-                }
+                
 
                 Spacer()
             }

@@ -16,14 +16,16 @@ struct WorkoutList: View {
 
     var body: some View {
         Group {
+            
             if let todayTasks = weekData.days.first(where: { $0.name == getCurrentDay() }), !todayTasks.items.isEmpty {
-                ScrollView {
+                ScrollView { 
                     LazyVStack(spacing: 5) {
                         ForEach(Array(todayTasks.items.enumerated()), id: \.element.id) { index, uniqueItem in
                             // Wrap each task in a RoundedRectangle
                             Spacer()
                             RoundedRectangle(cornerRadius: 10) // Adjust cornerRadius as needed
-                                .fill(Color(hue: 1.0, saturation: 0.0, brightness: 0.908)) // Use any color that fits your design
+                                .fill(Color(red: 41/255, green: 41/255, blue: 41/255))
+
                                 .frame(height: 70) // Adjust height as needed
                                 .shadow(radius: 5) // Adjust shadow radius as needed
                                 .overlay(
@@ -31,9 +33,9 @@ struct WorkoutList: View {
                                         Circle()
                                             .foregroundColor(Color(red: 0.07, green: 0.69, blue: 0.951))
                                             .frame(width: 45.0, height: 45.0) // Adjust the size of the circle as needed
-                                            .opacity(0.5)
+                                            
                                         Text(uniqueItem.value)
-                                            .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
+                                            .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
                                             .font(.system(size: 20))
                                         Spacer()
                                     }
@@ -52,21 +54,10 @@ struct WorkoutList: View {
                     }
                     .padding(.horizontal)
                 }
+            
                 
 
                 .border(Color.gray, width: 0.2)
-            } else {
-                VStack {
-                    Image("Image")
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 380, height: 380)
-                        .clipped()
-                    Text("Relax, You EARNED It!")
-                        .font(.title)
-                        .foregroundColor(Color(red: 0.067, green: 0.69, blue: 0.951))
-                        .bold()
-                }
             }
         }
     }

@@ -13,7 +13,7 @@ struct QuickInfo: View {
     var body: some View {
         HStack(spacing: 10) {
             RoundedRectangle(cornerRadius: 10)
-                .fill(Color(hue: 1.0, saturation: 0.0, brightness: 0.908)) // Use any color that fits your design
+                .fill(Color(red: 41/255, green: 41/255, blue: 41/255)) // Use any color that fits your design
                 .frame( height: 70) // Adjust height as needed
                 .shadow(radius: 5) // Adjust shadow radius as needed
                 .overlay(
@@ -21,11 +21,11 @@ struct QuickInfo: View {
                     
                     VStack {
                         Text("5'9")
-                            .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
+                            .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
                             .font(.title2)
                             .bold()
                         Text("Height")
-                            .foregroundColor(Color.gray)
+                            .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
                             .font(.headline)
                     }
                     
@@ -34,7 +34,7 @@ struct QuickInfo: View {
                 .padding(.horizontal, 10) // Padding applied to the Button
 
             RoundedRectangle(cornerRadius: 10)
-                .fill(Color(hue: 1.0, saturation: 0.0, brightness: 0.908)) // Use any color that fits your design
+                .fill(Color(red: 41/255, green: 41/255, blue: 41/255)) // Use any color that fits your design
                 .frame( height: 70) // Adjust height as needed
                 .shadow(radius: 5) // Adjust shadow radius as needed
                 .overlay(
@@ -42,11 +42,11 @@ struct QuickInfo: View {
                     
                     VStack {
                         Text("180 lbs")
-                            .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
+                            .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
                             .font(.title2)
                             .bold()
                         Text("Weight")
-                            .foregroundColor(Color.gray)
+                            .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
                             .font(.headline)
                     }
                     
@@ -55,7 +55,7 @@ struct QuickInfo: View {
                 .padding(.horizontal, 10) // Padding applied to the Button
 
             RoundedRectangle(cornerRadius: 10)
-                .fill(Color(hue: 1.0, saturation: 0.0, brightness: 0.908)) // Use any color that fits your design
+                .fill(Color(red: 41/255, green: 41/255, blue: 41/255)) // Use any color that fits your design
                 .frame(height: 70) // Adjust height as needed
                 .shadow(radius: 5) // Adjust shadow radius as needed
                 .overlay(
@@ -63,11 +63,11 @@ struct QuickInfo: View {
                     
                     VStack {
                         Text("20")
-                            .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
+                            .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
                             .font(.title2)
                             .bold()
                         Text("Age")
-                            .foregroundColor(Color.gray)
+                            .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
                             .font(.headline)
                     }
                     

@@ -13,63 +13,61 @@ struct FriendActivity: View {
             HStack(spacing: 170) {
                 Text("Latest Activity")
                     .font(.headline)
+                    .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
                     .bold()
 
                 Text("See more")
+                    .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
             }
 
             ScrollView {
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(Color(hue: 1.0, saturation: 0.0, brightness: 0.908)) // Use any color that fits your design
-                    .frame(height: 70) // Adjust height as needed
-                                 
+                    .fill(Color(red: 41/255, green: 41/255, blue: 41/255))
+                    .frame(height: 70)
                     .overlay(
-                        HStack(spacing: 30) {
-                            // Use ZStack to overlay the image on the circle
-                            ZStack {
+                        HStack {
+                          
+                            // Reduce spacing and add padding to move the image to the left
+                            ZStack(alignment: .center) { // Align the image to the center of the ZStack
                                 Circle()
                                     .foregroundColor(Color(red: 0.07, green: 0.69, blue: 0.951))
-                                    .frame(width: 45.0, height: 45.0) // Adjust the size of the circle as needed
+                                    .frame(width: 45.0, height: 45.0)
                                     .opacity(0.5)
-                                
-                                // Replace "person.fill" with your actual image name
+
                                 Image("me")
-                                    .resizable() // Make the image resizable
-                                
-                                    .aspectRatio(contentMode: .fill) // Fill the frame while preserving aspect ratio
-                                    .frame(width: 55.0, height: 55.0) // Match the circle's size
-                                    .clipShape(Circle()) // Clip the image to a circular shape
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 55.0, height: 55.0)
+                                    .clipShape(Circle())
                                     .shadow(radius: 5)
                             }
-                       
-                            VStack{
-                                Spacer()
+                            .padding(.leading, -5) // Adjust this value to move the image further left
+
+                            Spacer() // Use Spacer to push content to the edges
+
+                            VStack(alignment: .center) { // Align the text to the center of VStack
                                 Text("Luke Completed A Workout!")
-                                    .font(.callout)
-                                    .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
-                                    .bold()
-                                    
+                                    .font(.system(size: 18))
+                                    .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
                                     .bold()
                                     .padding(.trailing)
                                 Text("About 2 mins ago")
-                                    .foregroundColor(.gray)
-                                    .font(.subheadline)
-                                Spacer()
-                                
+                                    .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
+                                    .font(.system(size: 13))
                             }
-                            
+                            .frame(maxWidth: .infinity, alignment: .trailing) // Align VStack content to the leading edge
+                            .padding(.trailing, 20)
+                          
                         }
-                        
-                             // Add some horizontal padding inside the overlay
+                       
+                        .padding(.horizontal) // Add padding inside the overlay for breathing space
                     )
-             
             }
-            .padding(.horizontal, 20.0)
+            .padding(.horizontal, 15.0)
         }
     }
 }
 
-// Correct way to define a preview provider for your SwiftUI view
 struct FriendActivity_Previews: PreviewProvider {
     static var previews: some View {
         FriendActivity()

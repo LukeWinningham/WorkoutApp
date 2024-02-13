@@ -14,7 +14,7 @@ struct NameOfDay: View {
             Text("Crush Today!")
                 .font(.largeTitle)
                 .bold()
-                .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
+                .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
                 .padding(.top, 20)
         }
     }

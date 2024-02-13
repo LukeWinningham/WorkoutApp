@@ -150,25 +150,27 @@ class Day: Identifiable, ObservableObject, Codable {
 class WeekData: ObservableObject {
     static let shared = WeekData()
 
-    @Published var days: [Day] {
-        didSet {
-            saveToUserDefaults()
-        }
-    }
+    @Published var days: [Day]
 
     private init() {
-        if let savedDays = WeekData.loadFromUserDefaults() {
-            self.days = savedDays
-        } else {
-            let dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-            self.days = dayNames.map { Day(name: $0) }
-        }
+        self.days = WeekData.loadFromUserDefaults() ?? []
     }
 
     internal func saveToUserDefaults() {
         if let encodedData = try? JSONEncoder().encode(days) {
             UserDefaults.standard.set(encodedData, forKey: "days")
         }
+    }
+    
+    func clearUserDefaults() {
+        UserDefaults.standard.removeObject(forKey: "days")
+        self.days = []
+    }
+    
+    func addDay(withName name: String) {
+        let newDay = Day(name: name)
+        self.days.append(newDay)
+        saveToUserDefaults()
     }
 
     static func loadFromUserDefaults() -> [Day]? {
@@ -179,74 +181,209 @@ class WeekData: ObservableObject {
         return nil
     }
 }
+struct DayRow: View {
+    @ObservedObject var day: Day
+    @EnvironmentObject var weekData: WeekData
+    @State private var showingDeleteButton = false
 
+    var body: some View {
+        VStack {
+            HStack{
+            RoundedRectangle(cornerRadius: 10)
+                    .fill(Color(red: 41/255, green: 41/255, blue: 41/255))
+
+                .frame(height: 70)
+                .overlay(
+                    HStack {
+                        Circle()
+                            .frame(width: 50, height: 40)
+                            .shadow(radius: 5)
+                            .foregroundColor( Color(red: 0.07, green: 0.69, blue: 0.951))
+                            .opacity(1)
+                        
+                        Text(day.name)
+                            .font(.system(size: 20))
+                            .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
+                        
+                        Spacer()
+                        
+                        
+                    }
+                )
+            
+                .gesture(swipeGesture)
+                .offset(x: showingDeleteButton ? -80 : 0)
+                .animation(.easeInOut, value: showingDeleteButton)
+            if showingDeleteButton {
+                Button(action: {
+                    if let index = weekData.days.firstIndex(where: { $0.id == day.id }) {
+                        weekData.days.remove(at: index)
+                        weekData.saveToUserDefaults()
+                        showingDeleteButton = false
+                    }
+                }) {
+                    Image(systemName: "trash")
+                        .foregroundColor(.white)
+                        .padding(8)
+                        .background(Color.red)
+                        .cornerRadius(8)
+                }
+                .transition(.move(edge: .trailing))
+                .frame(width: 80)
+            }
+        }
+            Divider()
+                .background(Color(red: 160/255, green: 160/255, blue: 160/255))
+        }
+        .padding(.top, 20.0)
+    }
+
+    var swipeGesture: some Gesture {
+        DragGesture()
+            .onChanged { value in
+                if value.translation.width < -50 {
+                    showingDeleteButton = true
+                } else {
+                    showingDeleteButton = false
+                }
+            }
+            .onEnded { value in
+                if value.translation.width > -30 {
+                    showingDeleteButton = false
+                }
+            }
+    }
+}
 struct AddView: View {
     @EnvironmentObject var weekData: WeekData  // Access WeekData from the environment
+    @State private var isTextFieldContainerVisible = false
+    @State private var newItem: String = ""
+    @State private var keyboardHeight: CGFloat = 0
+    @State private var isKeyboardVisible = false // Define isKeyboardVisible here
 
     var body: some View {
         NavigationView {
-            ZStack {
-                Color(red: 217/255, green: 217/255, blue: 217/255).edgesIgnoringSafeArea(.all)
+            ZStack(alignment: .topTrailing) {
+                Color(red: 18/255, green: 18/255, blue: 18/255)
+                    .edgesIgnoringSafeArea(.all)
                 VStack {
                     headerView
                     daysListView
                 }
+                // Show the text field container view conditionally
+                if isTextFieldContainerVisible {
+                    textFieldContainerView
+                        .padding(.top, 200) // Add padding to separate header from button
+                }
+                
+                addButton
+                    .padding(.top, 10) // Add padding to separate header from button
+                    .disabled(weekData.days.count >= 7) // Disable button when there are 7 days
             }
-            
+            .offset(y: isKeyboardVisible ? -150 : 0) // Adjust the offset based on keyboard visibility
+            .animation(.easeInOut, value: isKeyboardVisible)
         }
     }
 
+    
     var headerView: some View {
         HStack {
             Spacer()
-            Text("Choose A Day")
-                .font(.title2)
-                .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
+            Text("Add A Day")
+                .font(.title)
+                .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
+                .padding()
             Spacer()
         }
         .padding()
     }
-
+    
     var daysListView: some View {
-        LazyVStack {
-            ForEach(weekData.days) { day in
-                NavigationLink(destination: DayDetailView(day: day).environmentObject(weekData)) {
-                    DayRow(day: day)
+        ScrollView {
+            LazyVStack {
+                ForEach(weekData.days.indices, id: \.self) { index in
+                    let day = weekData.days[index]
+                    NavigationLink(destination: DayDetailView(day: day).environmentObject(weekData)) {
+                        DayRow(day: day)
+                            .gesture(longPressGesture(index)) // Attach long press gesture to each DayRow
+                    }
                 }
             }
+            .padding(.horizontal)
+            
         }
-        .padding(.horizontal)
+        
+        .border(Color.gray, width: 0.2) // Apply border to List
         
     }
-}
-
-
-struct DayRow: View {
-    @ObservedObject var day: Day
-   
-
-    var body: some View {
-        VStack {
-            HStack {
-                Circle()
-                    .frame(width: 50, height: 40)
-                    .shadow(radius: 5)
-                    .foregroundColor(day.items.isEmpty ? Color(red: 0.07, green: 0.69, blue: 0.951) : Color(hue: 1.0, saturation: 0.251, brightness: 0.675))
-                    .opacity(1)
-
-                Text(day.name)
-                   
-                    .font(.system(size: 20))
-                    .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
-
-                Spacer()
+    
+    // Function to create a long press gesture for reordering
+    func longPressGesture(_ index: Int) -> some Gesture {
+        LongPressGesture(minimumDuration: 0.5)
+            .onEnded { _ in
+                withAnimation {
+                    // Move the selected day to the first position
+                    weekData.days.move(fromOffsets: IndexSet(integer: index), toOffset: 0)
+                    weekData.saveToUserDefaults()
+                }
             }
-          
-        
-            Divider()
-                .background(Color(red: 160/255, green: 160/255, blue: 160/255))
+    }
+    
+    // Text field container view
+    // Text field container view
+    var textFieldContainerView: some View {
+        HStack {
+            // Blue circle on the left
+            Circle()
+                .frame(width: 40, height: 40)
+                .foregroundColor(Color(red: 0.07, green: 0.69, blue: 0.951))
+                .shadow(radius: 3)
+            
+            // Text field for entering workout name
+            CustomTextField(placeholder: "Day Name", text: $newItem, placeholderTextColor: UIColor.lightGray)
+                .padding(.horizontal)
+                .frame(height: 50)
+                
+            
+            // Button to save the workout
+            Button("Save") {
+                // Handle save action
+                if !newItem.isEmpty {
+                    weekData.addDay(withName: newItem) // Add a new day
+                    newItem = "" // Reset the text field
+                    
+                    // Dismiss the keyboard
+                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                    isTextFieldContainerVisible = false
+
+                }
+                
+            }
+            .padding(.trailing)
         }
         .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 10) // Rounded rectangle background for the entire container
+                .fill(Color(red: 41/255, green: 41/255, blue: 41/255))
+
+                .shadow(radius: 3) // Add shadow
+        )
+        .padding()
+        .padding(.bottom, 20) // Add some bottom padding
+    }
+
+
+    var addButton: some View {
+        Button(action: {
+            // Toggle the visibility of the text field container view
+            isTextFieldContainerVisible.toggle()
+        }) {
+            Image(systemName: "plus.circle.fill")
+                .resizable()
+                .frame(width: 20, height: 20)
+                .foregroundColor(Color(red: 0/255, green: 211/255, blue: 255/255))
+                .padding()
+        }
     }
 }
 

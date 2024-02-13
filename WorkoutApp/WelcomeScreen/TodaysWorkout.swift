@@ -14,7 +14,7 @@ struct TodaysWorkout: View {
                                        .environmentObject(WeekData.shared)
                                        .environmentObject(WorkoutData())) {
             RoundedRectangle(cornerRadius: 10)
-                .fill(Color(hue: 1.0, saturation: 0.0, brightness: 0.908)) // Use any color that fits your design
+                .fill(Color(red: 41/255, green: 41/255, blue: 41/255))
                 .frame(height: 70) // Adjust height as needed
                 .shadow(radius: 5) // Adjust shadow radius as needed
                 .overlay(
@@ -27,18 +27,19 @@ struct TodaysWorkout: View {
                         Spacer()
                         VStack {
                             Text("Today is Leg Day!")
-                                .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
+                                .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
                                 .font(.system(size: 20))
                                 .bold()
                             Text("Get Started")
-                                .foregroundColor(Color.gray)
+                                .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
                                 .font(.system(size: 15))
                         }
                         
                         Spacer() // Keeps the text and circle aligned to the left, and the forward icon aligned to the right
                         
                         Image(systemName: "chevron.forward")
-                            .foregroundColor(Color(red: 1.0, green: 0.677, blue: 0.215))
+                            .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
+
                             .frame(width: 50, height: 50)
                             .imageScale(.large)
                     }
@@ -55,6 +56,7 @@ struct TodaysWorkout_Previews: PreviewProvider {
             TodaysWorkout()
                 .environmentObject(WeekData.shared)
                 .environmentObject(WorkoutData())
+                .environment(\.colorScheme, .light) // Preview in dark mode
         }
     }
 }

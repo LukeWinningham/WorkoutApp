@@ -40,18 +40,20 @@ struct TopProfile: View {
                             Spacer()
                             Text("Luke")
                                 .font(.title2)
-                                .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
+                                .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
                                 .bold()
                             
                                 .bold()
                                 .padding(.trailing)
                             Text("Currently Cutting")
-                                .foregroundColor(.gray)
+                                .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
                                 .font(.subheadline)
                             Spacer()
                             HStack{
-                                Image(systemName: "flame.fill") // Use your own image or system image name
+                                Image(systemName: "flame.fill")
+                                    .foregroundColor(Color.orange) // Use your own image or system image name
                                 Text("32")
+                                    .foregroundColor(Color.orange)
                             }
                         }
                         

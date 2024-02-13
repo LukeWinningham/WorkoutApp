@@ -10,13 +10,14 @@ import Combine
 struct AccountCard: View {
     var body: some View {
         RoundedRectangle(cornerRadius: 10)
-            .fill(Color(hue: 1.0, saturation: 0.0, brightness: 0.908)) // Use any color that fits your design
+            .fill(Color(red: 41/255, green: 41/255, blue: 41/255)) // Use any color that fits your design
             .frame(height: 170) // Adjust size as needed
             .shadow(radius: 5) // Adjust shadow radius as needed
             .overlay(
                 VStack(alignment: .leading, spacing: 20.0) { // Reduced spacing to accommodate elements better
                     Text("Account")
                         .font(.title2)
+                        .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
                         .bold()
                         .padding(.top, 20) // Reduced padding to align with the overall layout
                         .padding(.leading, 10) // Apply 10 points of padding to the leading edge
@@ -25,25 +26,26 @@ struct AccountCard: View {
                             HStack {
                                 Image(systemName: "person.2")
                                     .font(.title2)
-                                    .foregroundColor(Color(red: 1.0, green: 0.677, blue: 0.215))
+                                    .foregroundColor(Color(red: 0/255, green: 117/255, blue: 255/255))
                                 Text("Friends")
                                     .font(.title2)
                                     
-                                    .foregroundColor(Color.gray)
+                                    .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
                             }
                             .padding(.leading, 15) // Added padding to move "Friends" to the right
                             
                             HStack {
                                 Image(systemName: "doc.plaintext")
+                                    .foregroundColor(Color.white)
                                     .font(.title2)
-                                    .foregroundColor(Color(red: 1.0, green: 0.677, blue: 0.215))
+                                    
                                 VStack(alignment: .center) { // Align text to leading
                                     Text("Personal")
                                         .font(.title2)
-                                        .foregroundColor(Color.gray)
+                                        .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
                                     Text("Data")
                                         .font(.title2)
-                                        .foregroundColor(Color.gray)
+                                        .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
                                 }
                             }
                             .padding(.leading, 20) // Added padding to move "Personal Data" to the right
@@ -52,24 +54,26 @@ struct AccountCard: View {
                         VStack(alignment: .leading, spacing: 10) { // Matched alignment and spacing with the first VStack
                             HStack {
                                 Image(systemName: "trophy")
+                                    .foregroundColor(Color.yellow)
                                     .font(.title3)
-                                    .foregroundColor(Color(red: 1.0, green: 0.677, blue: 0.215))
+                                    
                                 Text("Achievements")
                                     .font(.title2)
-                                    .foregroundColor(Color.gray)
+                                    .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
                             }
                             HStack {
-                                Image(systemName: "chart.bar")
+                                Image(systemName: "figure.run.square.stack")
+                                    .foregroundColor(Color.red)
                                     .font(.title2)
-                                    .foregroundColor(Color(red: 1.0, green: 0.677, blue: 0.215))
-                                VStack(alignment: .leading) { // Align text to leading
+                                    
+                                VStack() { // Align text to leading
                                     Text("Workout")
                                         .font(.title2)
-                                        .foregroundColor(Color.gray)
+                                        .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
                                         .multilineTextAlignment(.center)
-                                    Text("Progress")
+                                    Text("Packs")
                                         .font(.title2)
-                                        .foregroundColor(Color.gray)
+                                        .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
                                 }
                             }
                         }

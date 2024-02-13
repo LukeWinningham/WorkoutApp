@@ -16,22 +16,22 @@ struct WorkoutAppApp: App {
 
     var body: some Scene {
         WindowGroup {
-            Group {
-                if authViewModel.isUserAuthenticated {
-                    if authViewModel.isProfileCompleted {
-                        NavBar() // Your authenticated and profile completed view
-                            .environmentObject(workoutData) // Provide workoutData to your views
-                            .environmentObject(navigationState) // Provide navigationState to your views
-                    } else {
-                        PersonalData() // Show the PersonalData view if the profile is not completed
-                            .environmentObject(authViewModel) // Ensure PersonalData can update the authViewModel
-                    }
-                } else {
-                    LogOn()
-                        .environmentObject(authViewModel) // Provide authViewModel to your LogOn view
-                }
-            }
-            .environmentObject(WeekData.shared) // Inject WeekData.shared as an Environment Object
+           Group {
+             if authViewModel.isUserAuthenticated {
+             if authViewModel.isProfileCompleted {
+             NavBar() // Your authenticated and profile completed view
+             .environmentObject(workoutData) // Provide workoutData to your views
+             .environmentObject(navigationState) // Provide navigationState to your views
+             } else {
+             PersonalData() // Show the PersonalData view if the profile is not completed
+             .environmentObject(authViewModel) // Ensure PersonalData can update the authViewModel
+             }
+             } else {
+             LogOn()
+             .environmentObject(authViewModel) // Provide authViewModel to your LogOn view
+             }
+             }
+             .environmentObject(WeekData.shared) // Inject WeekData.shared as an Environment Object
         }
     }
 }

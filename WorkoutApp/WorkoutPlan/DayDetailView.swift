@@ -8,6 +8,9 @@
 import SwiftUI
 import Combine
 
+
+
+
 struct DayDetailView: View {
     @ObservedObject var day: Day
     @EnvironmentObject var weekData: WeekData
@@ -17,7 +20,8 @@ struct DayDetailView: View {
     @State private var setsText: String = ""
     @State private var repsText: String = ""
     @State private var editingIndex: Int? = nil // Add this line to keep track of the item being edited
-    
+    @State private var showingDeleteButton = false
+
     @State private var isTextFieldContainerVisible = false
     @State private var isKeyboardVisible = false
     @State private var timeText: String = "" // Add this line to keep track of the time input
@@ -27,7 +31,7 @@ struct DayDetailView: View {
     var body: some View {
         ZStack {
             // Tap gesture added to this Color view
-            Color(red: 217/255, green: 217/255, blue: 217/255)
+            Color(red: 18/255, green: 18/255, blue: 18/255)
                 .edgesIgnoringSafeArea(.all)
                 .onTapGesture {
                     self.isTextFieldContainerVisible = false
@@ -69,7 +73,7 @@ struct DayDetailView: View {
     var headerView: some View {
         Text(day.name)
             .font(.title)
-            .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
+            .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
             .padding()
     }
     
@@ -221,63 +225,88 @@ struct DayDetailView: View {
         isTextFieldContainerVisible = true // Show the text field container for editing
     }
 
-        var itemsListView: some View {
-            
-            ScrollView {
-                LazyVStack {
-                    ForEach(day.items.indices, id: \.self) { index in
-                        let item = day.items[index]
-                        VStack {
-                            RoundedRectangle(cornerRadius: 10) // Adjust cornerRadius as needed
-                                .fill(Color(hue: 1.0, saturation: 0.0, brightness: 0.908)) // Use any color that fits your design
-                                .frame(height: 70) // Adjust height as needed
-                                .shadow(radius: 5) // Adjust shadow radius as needed
-                                .overlay(
-                            HStack {
-                                Circle()
-                                    .frame(width: 50, height: 40)
-                                    .shadow(radius: 5)
-                                    .foregroundColor(Color(red: 0.07, green: 0.69, blue: 0.951))
-                                    .opacity(1)
-                                VStack(alignment: .leading){
-                                    Text(item.value)
-                                        .font(.system(size: 20))
-                                        .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
+    var itemsListView: some View {
+        ScrollView {
+            LazyVStack {
+                ForEach(day.items.indices, id: \.self) { index in
+                    let item = day.items[index]
+                    HStack {
+                        RoundedRectangle(cornerRadius: 10) // Adjust cornerRadius as needed
+                            .fill(Color(red: 41/255, green: 41/255, blue: 41/255))
+// Use any color that fits your design
+                            .frame(height: 70) // Adjust height as needed
+                            .shadow(radius: 5) // Adjust shadow radius as needed
+                            .overlay(
+                                HStack {
+                                    Circle()
+                                        .frame(width: 50, height: 40)
+                                        .shadow(radius: 5)
+                                        .foregroundColor(Color(red: 0.07, green: 0.69, blue: 0.951))
+                                        .overlay(
+                                            Image("weightboy")
+                                                .resizable() // Allows the image to be resized
+                                                .aspectRatio(contentMode: .fill) // Keeps the aspect ratio and fills
+                                                .padding(.trailing, 2)
+                                        )
+                                    VStack(alignment: .leading){
+                                        Text(item.value)
+                                            .font(.system(size: 20))
+                                            .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
 
-                                    if let sets = item.numberSets, let reps = item.numberReps {
-                                        Text("\(sets) Sets of \(reps) Reps")
-                                            .font(.system(size: 12))
-                                            .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
-                                    } else if let time = item.time {
-                                        Text("Time: \(time) minutes")
-                                            .font(.system(size: 12))
-                                            .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
+                                        if let sets = item.numberSets, let reps = item.numberReps {
+                                            Text("\(sets) Sets of \(reps) Reps")
+                                                .font(.system(size: 12))
+                                                .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
+                                        } else if let time = item.time {
+                                            Text("Time: \(time) minutes")
+                                                .font(.system(size: 12))
+                                                .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
+                                        }
                                     }
-
-                                    
+                                    Spacer()
+                
                                 }
-                                Spacer()
-                                Spacer(minLength: 50)
-                                
-                            }
-                            
                             )
-                        }
-                        .padding(10.0)
-                        .onTapGesture(count: 2) { // Double-tap gesture
-                            // Handle item deletion here
-                            day.items.remove(at: index)
-                            weekData.updateDay(day)
-                        }
-                        .onTapGesture(count: 1) { // Double-tap gesture
-                            // Handle item deletion here
-                            editExercise(at: index)
-                        }
                         
-                            
+                            .offset(x: showingDeleteButton ? -80 : 0) // Adjust the offset based on showingDeleteButton
+                            .animation(.easeInOut, value: showingDeleteButton)
+
+                        if showingDeleteButton {
+                            Button(action: {
+                                // Delete the item
+                                day.items.remove(at: index)
+                                weekData.updateDay(day)
+                            }) {
+                                Image(systemName: "trash")
+                                    .foregroundColor(.white)
+                                    .padding(8)
+                                    .background(Color.red)
+                                    .cornerRadius(8)
+                            }
+                        }
+                        Spacer()
                     }
-                    
+                    .padding(10.0)
+                    .gesture(
+                        DragGesture()
+                            .onChanged { value in
+                                if value.translation.width < -50 {
+                                    showingDeleteButton = true
+                                } else {
+                                    showingDeleteButton = false
+                                }
+                            }
+                            .onEnded { value in
+                                if value.translation.width > -30 {
+                                    showingDeleteButton = false
+                                }
+                            }
+                    )
                 }
+            }
+            .padding()
+            .border(Color.gray, width: 0.2) // Apply border to LazyVStack
+
                 Button(action: {
                     
                     self.isTextFieldContainerVisible.toggle()  // Show the text field container
@@ -285,7 +314,7 @@ struct DayDetailView: View {
                     Image(systemName: "plus.circle.fill")
                         .resizable()
                         .frame(width: 50, height: 50)
-                        .foregroundColor(Color(red: 1.0, green: 0.677, blue: 0.215))
+                        .foregroundColor(Color(red: 0/255, green: 211/255, blue: 255/255))
                 }
                 .padding()
             }

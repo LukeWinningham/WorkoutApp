@@ -9,7 +9,6 @@ import Combine
 
 struct NavBar: View {
     @EnvironmentObject var navigationState: NavigationState
-
     var body: some View {
         NavigationView {
             TabView(selection: $navigationState.selectedTab) {
@@ -42,11 +41,11 @@ struct NavBar: View {
                     .tag(3)
             }
             .navigationBarTitle("", displayMode: .inline)
-            .foregroundColor(Color(red: 1.0, green: 0.677, blue: 0.215))
+            .foregroundColor(Color(red: 0/255, green: 211/255, blue: 255/255))
         }
         .onAppear {
-            UITabBar.appearance().unselectedItemTintColor = .darkGray
-            UITabBar.appearance().backgroundColor = UIColor(red: 217/255, green: 217/255, blue: 217/255, alpha: 0.9)
+            UITabBar.appearance().unselectedItemTintColor = UIColor(Color(red: 199/255, green: 199/255, blue: 199/255))
+            UITabBar.appearance().backgroundColor = UIColor(Color(red: 20/255, green: 20/255, blue: 20/255))
         }
     }
 }
@@ -61,5 +60,6 @@ struct NavBar_Previews: PreviewProvider {
             .environmentObject(navigationState)
             .environmentObject(weekData)
             .environmentObject(workoutData)
+        
     }
 }

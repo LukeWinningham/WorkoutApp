@@ -1,0 +1,23 @@
+{
+  "images" : [
+    {
+      "filename" : "DALL·E 2024-02-12 23.45.39 - A simple clipart-style image featuring a basic black stick figure on a solid white background. The stick figure is standing upright, holding a basic,.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "DALL·E 2024-02-12 23.45.39 - A simple clipart-style image featuring a basic black stick figure on a solid white background. The stick figure is standing upright, holding a basic, 1.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "DALL·E 2024-02-12 23.45.39 - A simple clipart-style image featuring a basic black stick figure on a solid white background. The stick figure is standing upright, holding a basic, 2.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

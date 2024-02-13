@@ -19,15 +19,21 @@ struct Welcome: View {
 
     var body: some View {
         ZStack {
-            Color(red: 217/255, green: 217/255, blue: 217/255).edgesIgnoringSafeArea(.all)
+            Color(red: 18/255, green: 18/255, blue: 18/255)
+                .edgesIgnoringSafeArea(.all)
             VStack(spacing: 30) {
                 welcomeSection
                 VStack {
                     VStack {
-                        Text("Welcome Back,").foregroundColor(.gray).font(.title3)
+                        Text("Welcome Back,")
+                            .font(.title3)
+                            .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
+
                             .bold()
-                        Text("Luke").foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255)).font(.largeTitle)
-                            .bold()
+                        Text("Luke")
+                            .font(.system(size:50))
+                            .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))                            .bold()
+                        
                     }
                 }
                 Spacer()
@@ -42,7 +48,6 @@ struct Welcome: View {
                         .font(.title)
                         .multilineTextAlignment(.center)
                         .bold()
-                        .foregroundColor(Color(red: 0.067, green: 0.69, blue: 0.951))
                 } else {
                     // show rectangle and name of the wokrout day
                     TodaysWorkout()
@@ -60,16 +65,15 @@ struct Welcome: View {
         HStack {
             VStack{
                 Image("Logo")
-                    .foregroundColor(Color(red: 1.0, green: 0.677, blue: 0.215))
-                   
                     .frame(width: 50, height: 50)
                     .imageScale(.small)
             }
             Spacer()
             Button(action: { showingAddView = true }) {
                 Image(systemName: "magnifyingglass")
-                    .foregroundColor(Color(red: 1.0, green: 0.677, blue: 0.215))
                     .frame(width: 50, height: 50)
+                    .foregroundColor(Color(red: 0/255, green: 211/255, blue: 255/255))
+
                     .imageScale(.large)
             }
             .sheet(isPresented: $showingAddView) {
