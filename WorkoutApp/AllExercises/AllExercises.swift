@@ -57,15 +57,17 @@ struct AllExercises: View {
                 }
                 ScrollView {
                     ForEach(filteredExercises, id: \.name) { exerciseDisplay in
-                        VStack(alignment: .leading) {
-                            Text(exerciseDisplay.name)
-                                .font(.headline)
-                                .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
-                            
+                     NavigationLink(destination: AddExercise(exerciseName: exerciseDisplay.name, exerciseCategory: exerciseDisplay.category)) {
+                      VStack(alignment: .leading)
+                         {
+                             Text(exerciseDisplay.name)
+                           .font(.headline)
+                                .foregroundColor(Color.white)
                             Text(exerciseDisplay.category)
-                                .font(.subheadline)
-                                .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
-                            Divider()
+                                 .font(.subheadline)
+                          .foregroundColor(Color.white)
+                               Divider()
+                             }
                         }
                         .padding()
                     }

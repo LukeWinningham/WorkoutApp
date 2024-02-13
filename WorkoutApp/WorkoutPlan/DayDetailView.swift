@@ -55,14 +55,15 @@ struct DayDetailView: View {
                 Button(action: {
                     self.presentationMode.wrappedValue.dismiss()
                 }) {
-                    Image(systemName: "chevron.backward.circle.fill")
-                        .imageScale(.medium)
+                    Image(systemName: "chevron.backward")
+                        .imageScale(.small)
                         .font(.title)
-                        .foregroundColor(Color(hue: 0.014, saturation: 0.483, brightness: 0.901))
-                        .opacity(isKeyboardVisible ? 0.0 : 1.0) // Hide the button when the keyboard is visible
+                        .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
+                        .shadow(radius: 3)
                 }
             }
         }
+
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
             self.isKeyboardVisible = true
         }

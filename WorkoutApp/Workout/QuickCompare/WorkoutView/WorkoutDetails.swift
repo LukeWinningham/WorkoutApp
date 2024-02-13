@@ -87,15 +87,18 @@ struct WorkoutDetails: View {
                     VStack(spacing: 40) {
                         VStack(spacing: 40) {
                             HStack {
-                                Button(action: {
-                                    saveState()
-                                    self.presentationMode.wrappedValue.dismiss()
-                                }) {
-                                    Image(systemName: "chevron.backward.circle.fill")
-                                        .imageScale(.medium)
-                                        .font(.title)
-                                        .foregroundColor(Color(hue: 0.014, saturation: 0.483, brightness: 0.901))
-                                }
+                               
+                             
+                                        Button(action: {
+                                            self.presentationMode.wrappedValue.dismiss()
+                                        }) {
+                                            Image(systemName: "chevron.backward")
+                                                .imageScale(.small)
+                                                .font(.title)
+                                                .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
+                                                .shadow(radius: 3)
+                                        }
+
                                 .padding([.leading, .bottom], 30.0)
                                 Spacer()
                                 Spacer()
