@@ -260,7 +260,7 @@ struct DayDetailView: View {
                                         } else if let time = item.time {
                                             Text("Time: \(time) minutes")
                                                 .font(.system(size: 12))
-                                                .foregroundColor(Color(red: 10/255, green: 10/255, blue: 10/255))
+                                                .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
                                         }
                                     }
                                     Spacer()

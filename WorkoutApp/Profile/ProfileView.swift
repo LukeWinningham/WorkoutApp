@@ -11,21 +11,32 @@ import Combine
 struct ProfileView: View {
     @EnvironmentObject var weekData: WeekData
     @EnvironmentObject var workoutData: WorkoutData
-    @State private var showingAddView = false
-    @State private var showingExerciseView = false
-    @State private var selectedExerciseIndex: Int?
+   
     @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
         ZStack(alignment: .top) { // Align content to the top
             Color(red: 18/255, green: 18/255, blue: 18/255)
                 .edgesIgnoringSafeArea(.all)
-
+                .navigationBarBackButtonHidden(true)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button(action: {
+                            self.presentationMode.wrappedValue.dismiss()
+                        }) {
+                            Image(systemName: "chevron.backward")
+                                .imageScale(.small)
+                                .font(.title)
+                                .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
+                                .shadow(radius: 3)
+                        }
+                    }
+                }
             VStack(spacing: 0) { // Use VStack to place the border right below the image
                 Image("background") // Ensure you have an image named "background" in your assets
                     .resizable()
                     .aspectRatio(contentMode: .fill) // Fill the frame while preserving aspect ratio
-                    .frame(width: UIScreen.main.bounds.width, height: 180) // Use the screen width for the image
+                    .frame(width: UIScreen.main.bounds.width, height: 215) // Use the screen width for the image
                     .clipShape(RoundedRectangle(cornerRadius: 0)) // You may not need a corner radius here
 
                 Rectangle() // This creates the border line
@@ -49,8 +60,7 @@ struct ProfileView: View {
 struct Profile_Previews: PreviewProvider {
     static var previews: some View {
         ProfileView()
-            .environmentObject(WeekData.shared)
-            .environmentObject(WorkoutData())
+            
     }
 }
 

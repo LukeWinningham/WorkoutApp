@@ -12,19 +12,14 @@ struct NavBar: View {
     var body: some View {
         NavigationView {
             TabView(selection: $navigationState.selectedTab) {
-                Welcome() // This line adds the Welcome view back as the first tab's content
+                
+                Discovery()
                     .tabItem {
-                        Image(systemName: "dumbbell")
-                        Text("Today")
+                        Image(systemName: "magnifyingglass")
+                        Text("Doscover")
                     }
-                    .tag(0)
-
-                AddView()
-                    .tabItem {
-                        Image(systemName: "calendar.badge.plus")
-                        Text("Plan")
-                    }
-                    .tag(1)
+                    .tag(3)
+            
 
                 Text("Coming Soon...")
                     .tabItem {
@@ -33,12 +28,19 @@ struct NavBar: View {
                     }
                     .tag(2)
 
-                ProfileView()
+                AddView()
                     .tabItem {
-                        Image(systemName: "person")
-                        Text("Profile")
+                        Image(systemName: "calendar.badge.plus")
+                        Text("Plan")
                     }
-                    .tag(3)
+                    .tag(1)
+             
+                Welcome() // This line adds the Welcome view back as the first tab's content
+                    .tabItem {
+                        Image(systemName: "dumbbell")
+                        Text("Today")
+                    }
+                    .tag(0)
             }
             .navigationBarTitle("", displayMode: .inline)
             .foregroundColor(Color(red: 0/255, green: 211/255, blue: 255/255))

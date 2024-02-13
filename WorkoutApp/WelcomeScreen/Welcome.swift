@@ -14,7 +14,6 @@ struct Welcome: View {
 
     @EnvironmentObject var weekData: WeekData
     @EnvironmentObject var workoutData: WorkoutData // Access WorkoutData from the environment
-    @State private var showingAddView = false
     @State private var selectedExerciseIndex: Int?
 
     var body: some View {
@@ -63,25 +62,19 @@ struct Welcome: View {
 
     private var welcomeSection: some View {
         HStack {
-            VStack{
-                Image("Logo")
-                    .frame(width: 50, height: 50)
-                    .imageScale(.small)
+            NavigationLink(destination: ProfileView()) {
+                Image("me")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 50.0, height: 50.0)
+                    .clipShape(Circle())
+                    .shadow(radius: 5)
             }
             Spacer()
-            Button(action: { showingAddView = true }) {
-                Image(systemName: "magnifyingglass")
-                    .frame(width: 50, height: 50)
-                    .foregroundColor(Color(red: 0/255, green: 211/255, blue: 255/255))
-
-                    .imageScale(.large)
-            }
-            .sheet(isPresented: $showingAddView) {
-                AddView(weekData: _weekData)
-            }
         }
         .padding()
     }
+
 }
 
 struct Welcome_Previews: PreviewProvider {
