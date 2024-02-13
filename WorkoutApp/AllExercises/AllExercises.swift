@@ -8,10 +8,11 @@ import SwiftUI
 import Combine
 
 struct AllExercises: View {
-    @ObservedObject var viewModel: ExercisesViewModel
+   
     @State private var searchText = ""
     @State private var selectedFilter: String? = nil
-    
+    @EnvironmentObject var viewModel: ExercisesViewModel
+
     // Define a structure to hold both exercise name and its category
     struct ExerciseDisplay {
         let name: String
@@ -70,14 +71,22 @@ struct AllExercises: View {
                     }
                 }
             }
-            .onAppear(perform: viewModel.loadExercises)
+            .onAppear{
+                print("AllExercises view appearing")
+               viewModel.loadExercises() 
+            }
         }
     }
 }
 
 struct AllExercises_Previews: PreviewProvider {
     static var previews: some View {
-        AllExercises(viewModel: ExercisesViewModel())
+        // Create an instance of ExercisesViewModel for previews
+        let exercisesViewModel = ExercisesViewModel()
+        
+        AllExercises()
+            // Provide the viewModel instance to the AllExercises view
+            .environmentObject(exercisesViewModel)
     }
 }
 

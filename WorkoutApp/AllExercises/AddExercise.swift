@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 struct AddExercise: View {
     var body: some View {

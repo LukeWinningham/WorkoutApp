@@ -26,6 +26,7 @@ struct DayDetailView: View {
     @State private var isKeyboardVisible = false
     @State private var timeText: String = "" // Add this line to keep track of the time input
     @State private var errorMessage: String = ""
+    @EnvironmentObject var exercisesViewModel: ExercisesViewModel
 
 
     var body: some View {
@@ -307,10 +308,10 @@ struct DayDetailView: View {
             .padding()
             .border(Color.gray, width: 0.2) // Apply border to LazyVStack
 
-                Button(action: {
-                    
-                    self.isTextFieldContainerVisible.toggle()  // Show the text field container
-                }) {
+            HStack{
+                NavigationLink(destination: AllExercises().environmentObject(exercisesViewModel)) {
+
+
                     Image(systemName: "plus.circle.fill")
                         .resizable()
                         .frame(width: 50, height: 50)
@@ -318,22 +319,20 @@ struct DayDetailView: View {
                 }
                 .padding()
             }
-            .border(Color.gray, width: 0.2) // Apply border to VStack
-
+            
+                 }
         }
     }
 
 
 
 
-
 struct DayDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        // Create a sample Day object
         let sampleDay = Day(name: "Monday", items: [UniqueItem(value: "Push-Ups", numberSets: 3, numberReps: 10, time: nil, description: "Standard push-ups")])
-        
-        DayDetailView(day: sampleDay) // Pass the sample Day object here
+        DayDetailView(day: sampleDay)
             .environmentObject(WeekData.shared)
+            .environmentObject(ExercisesViewModel()) // Provide a sample ExercisesViewModel
     }
 }
 
