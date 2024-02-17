@@ -8,7 +8,8 @@ import SwiftUI
 import Combine
 
 struct AllExercises: View {
-   
+    @Environment(\.presentationMode) var presentationMode
+
     @State private var searchText = ""
     @State private var selectedFilter: String? = nil
     @EnvironmentObject var viewModel: ExercisesViewModel
@@ -36,6 +37,20 @@ struct AllExercises: View {
         ZStack {
             Color(red: 18/255, green: 18/255, blue: 18/255)
                 .edgesIgnoringSafeArea(.all)
+                .navigationBarBackButtonHidden(true)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button(action: {
+                            self.presentationMode.wrappedValue.dismiss()
+                        }) {
+                            Image(systemName: "chevron.backward")
+                                .imageScale(.small)
+                                .font(.title)
+                                .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
+                                .shadow(radius: 3)
+                        }
+                    }
+                }
             VStack {
                 Text("Choose An Exercise")
                     .font(.title)
@@ -62,10 +77,11 @@ struct AllExercises: View {
                          {
                              Text(exerciseDisplay.name)
                            .font(.headline)
-                                .foregroundColor(Color.white)
+                           .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
                             Text(exerciseDisplay.category)
                                  .font(.subheadline)
-                          .foregroundColor(Color.white)
+                                 .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
+
                                Divider()
                              }
                         }

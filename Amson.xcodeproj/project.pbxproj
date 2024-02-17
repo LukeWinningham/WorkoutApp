@@ -25,6 +25,7 @@
 		D31098362B7357B1002A40DB /* PersonalData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D31098352B7357B1002A40DB /* PersonalData.swift */; };
 		D310983C2B76E3C9002A40DB /* DayDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D310983B2B76E3C9002A40DB /* DayDetailView.swift */; };
 		D35229E12B7B1C1D004493B8 /* AddExercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = D35229E02B7B1C1D004493B8 /* AddExercise.swift */; };
+		D3813AC32B8085D40027CD83 /* WorkoutPacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3813AC22B8085D40027CD83 /* WorkoutPacks.swift */; };
 		D387C4322B6B4A0A0064835E /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = D387C4312B6B4A0A0064835E /* Exercise.swift */; };
 		D39750E12B6E46130005280F /* Charts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D39750E02B6E46130005280F /* Charts.framework */; };
 		D39750E32B6E53320005280F /* Chart.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39750E22B6E53320005280F /* Chart.swift */; };
@@ -82,6 +83,7 @@
 		D31098352B7357B1002A40DB /* PersonalData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalData.swift; sourceTree = "<group>"; };
 		D310983B2B76E3C9002A40DB /* DayDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayDetailView.swift; sourceTree = "<group>"; };
 		D35229E02B7B1C1D004493B8 /* AddExercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddExercise.swift; sourceTree = "<group>"; };
+		D3813AC22B8085D40027CD83 /* WorkoutPacks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutPacks.swift; sourceTree = "<group>"; };
 		D387C4312B6B4A0A0064835E /* Exercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exercise.swift; sourceTree = "<group>"; };
 		D39750E02B6E46130005280F /* Charts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Charts.framework; path = System/Library/Frameworks/Charts.framework; sourceTree = SDKROOT; };
 		D39750E22B6E53320005280F /* Chart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chart.swift; sourceTree = "<group>"; };
@@ -94,13 +96,13 @@
 		D3DAD1D62B6DF496000C1D94 /* WorkoutData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutData.swift; sourceTree = "<group>"; };
 		D3DEC3E12B69918400C57844 /* AddingWorkout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddingWorkout.swift; sourceTree = "<group>"; };
 		D3EA0B0A2B6A281000BA4852 /* WorkoutDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutDetails.swift; sourceTree = "<group>"; };
-		D3FF6F562B68770C00AE6725 /* WorkoutApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WorkoutApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D3FF6F562B68770C00AE6725 /* Amson.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Amson.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3FF6F592B68770C00AE6725 /* WorkoutAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutAppApp.swift; sourceTree = "<group>"; };
 		D3FF6F5B2B68770C00AE6725 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		D3FF6F602B68770E00AE6725 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		D3FF6F662B68770E00AE6725 /* WorkoutAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WorkoutAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D3FF6F662B68770E00AE6725 /* AmsonTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AmsonTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3FF6F6A2B68770E00AE6725 /* WorkoutAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutAppTests.swift; sourceTree = "<group>"; };
-		D3FF6F702B68770E00AE6725 /* WorkoutAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WorkoutAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D3FF6F702B68770E00AE6725 /* AmsonUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AmsonUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3FF6F742B68770E00AE6725 /* WorkoutAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutAppUITests.swift; sourceTree = "<group>"; };
 		D3FF6F762B68770E00AE6725 /* WorkoutAppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutAppUITestsLaunchTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -234,6 +236,14 @@
 			path = AllExercises;
 			sourceTree = "<group>";
 		};
+		D3813AC12B80859C0027CD83 /* WorkoutPacks */ = {
+			isa = PBXGroup;
+			children = (
+				D3813AC22B8085D40027CD83 /* WorkoutPacks.swift */,
+			);
+			path = WorkoutPacks;
+			sourceTree = "<group>";
+		};
 		D39750DF2B6E46130005280F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -267,9 +277,9 @@
 		D3FF6F572B68770C00AE6725 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D3FF6F562B68770C00AE6725 /* WorkoutApp.app */,
-				D3FF6F662B68770E00AE6725 /* WorkoutAppTests.xctest */,
-				D3FF6F702B68770E00AE6725 /* WorkoutAppUITests.xctest */,
+				D3FF6F562B68770C00AE6725 /* Amson.app */,
+				D3FF6F662B68770E00AE6725 /* AmsonTests.xctest */,
+				D3FF6F702B68770E00AE6725 /* AmsonUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -285,6 +295,7 @@
 				D31098202B71F44A002A40DB /* NavigationState.swift */,
 				D31098192B71A07C002A40DB /* WelcomeScreen */,
 				D31098162B719B60002A40DB /* Workout */,
+				D3813AC12B80859C0027CD83 /* WorkoutPacks */,
 				D310983D2B76E6A6002A40DB /* WorkoutPlan */,
 				D35229DF2B7B1425004493B8 /* AllExercises */,
 				D31098412B76EC10002A40DB /* Progress */,
@@ -316,9 +327,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		D3FF6F552B68770C00AE6725 /* WorkoutApp */ = {
+		D3FF6F552B68770C00AE6725 /* Amson */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D3FF6F7A2B68770E00AE6725 /* Build configuration list for PBXNativeTarget "WorkoutApp" */;
+			buildConfigurationList = D3FF6F7A2B68770E00AE6725 /* Build configuration list for PBXNativeTarget "Amson" */;
 			buildPhases = (
 				D3FF6F522B68770C00AE6725 /* Sources */,
 				D3FF6F532B68770C00AE6725 /* Frameworks */,
@@ -328,14 +339,14 @@
 			);
 			dependencies = (
 			);
-			name = WorkoutApp;
+			name = Amson;
 			productName = WorkoutApp;
-			productReference = D3FF6F562B68770C00AE6725 /* WorkoutApp.app */;
+			productReference = D3FF6F562B68770C00AE6725 /* Amson.app */;
 			productType = "com.apple.product-type.application";
 		};
-		D3FF6F652B68770E00AE6725 /* WorkoutAppTests */ = {
+		D3FF6F652B68770E00AE6725 /* AmsonTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D3FF6F7D2B68770E00AE6725 /* Build configuration list for PBXNativeTarget "WorkoutAppTests" */;
+			buildConfigurationList = D3FF6F7D2B68770E00AE6725 /* Build configuration list for PBXNativeTarget "AmsonTests" */;
 			buildPhases = (
 				D3FF6F622B68770E00AE6725 /* Sources */,
 				D3FF6F632B68770E00AE6725 /* Frameworks */,
@@ -346,14 +357,14 @@
 			dependencies = (
 				D3FF6F682B68770E00AE6725 /* PBXTargetDependency */,
 			);
-			name = WorkoutAppTests;
+			name = AmsonTests;
 			productName = WorkoutAppTests;
-			productReference = D3FF6F662B68770E00AE6725 /* WorkoutAppTests.xctest */;
+			productReference = D3FF6F662B68770E00AE6725 /* AmsonTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		D3FF6F6F2B68770E00AE6725 /* WorkoutAppUITests */ = {
+		D3FF6F6F2B68770E00AE6725 /* AmsonUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D3FF6F802B68770E00AE6725 /* Build configuration list for PBXNativeTarget "WorkoutAppUITests" */;
+			buildConfigurationList = D3FF6F802B68770E00AE6725 /* Build configuration list for PBXNativeTarget "AmsonUITests" */;
 			buildPhases = (
 				D3FF6F6C2B68770E00AE6725 /* Sources */,
 				D3FF6F6D2B68770E00AE6725 /* Frameworks */,
@@ -364,9 +375,9 @@
 			dependencies = (
 				D3FF6F722B68770E00AE6725 /* PBXTargetDependency */,
 			);
-			name = WorkoutAppUITests;
+			name = AmsonUITests;
 			productName = WorkoutAppUITests;
-			productReference = D3FF6F702B68770E00AE6725 /* WorkoutAppUITests.xctest */;
+			productReference = D3FF6F702B68770E00AE6725 /* AmsonUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -392,7 +403,7 @@
 					};
 				};
 			};
-			buildConfigurationList = D3FF6F512B68770C00AE6725 /* Build configuration list for PBXProject "WorkoutApp" */;
+			buildConfigurationList = D3FF6F512B68770C00AE6725 /* Build configuration list for PBXProject "Amson" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -405,9 +416,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				D3FF6F552B68770C00AE6725 /* WorkoutApp */,
-				D3FF6F652B68770E00AE6725 /* WorkoutAppTests */,
-				D3FF6F6F2B68770E00AE6725 /* WorkoutAppUITests */,
+				D3FF6F552B68770C00AE6725 /* Amson */,
+				D3FF6F652B68770E00AE6725 /* AmsonTests */,
+				D3FF6F6F2B68770E00AE6725 /* AmsonUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -468,6 +479,7 @@
 				D31098282B72191F002A40DB /* Other.swift in Sources */,
 				D31098152B7199FF002A40DB /* NameOfDay.swift in Sources */,
 				D310981D2B71A8CF002A40DB /* FriendActivity.swift in Sources */,
+				D3813AC32B8085D40027CD83 /* WorkoutPacks.swift in Sources */,
 				D3DAD1D72B6DF496000C1D94 /* WorkoutData.swift in Sources */,
 				D310981F2B71AC71002A40DB /* TodaysWorkout.swift in Sources */,
 				D310982A2B721E8C002A40DB /* QuickInfo.swift in Sources */,
@@ -498,12 +510,12 @@
 /* Begin PBXTargetDependency section */
 		D3FF6F682B68770E00AE6725 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D3FF6F552B68770C00AE6725 /* WorkoutApp */;
+			target = D3FF6F552B68770C00AE6725 /* Amson */;
 			targetProxy = D3FF6F672B68770E00AE6725 /* PBXContainerItemProxy */;
 		};
 		D3FF6F722B68770E00AE6725 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D3FF6F552B68770C00AE6725 /* WorkoutApp */;
+			target = D3FF6F552B68770C00AE6725 /* Amson */;
 			targetProxy = D3FF6F712B68770E00AE6725 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -655,7 +667,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Luke.Amson;
+				PRODUCT_BUNDLE_IDENTIFIER = Luke.WorkoutApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -694,7 +706,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Luke.Amson;
+				PRODUCT_BUNDLE_IDENTIFIER = Luke.WorkoutApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -722,7 +734,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WorkoutApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WorkoutApp";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Amson.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Amson";
 			};
 			name = Debug;
 		};
@@ -742,7 +754,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WorkoutApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WorkoutApp";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Amson.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Amson";
 			};
 			name = Release;
 		};
@@ -783,7 +795,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		D3FF6F512B68770C00AE6725 /* Build configuration list for PBXProject "WorkoutApp" */ = {
+		D3FF6F512B68770C00AE6725 /* Build configuration list for PBXProject "Amson" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D3FF6F782B68770E00AE6725 /* Debug */,
@@ -792,7 +804,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D3FF6F7A2B68770E00AE6725 /* Build configuration list for PBXNativeTarget "WorkoutApp" */ = {
+		D3FF6F7A2B68770E00AE6725 /* Build configuration list for PBXNativeTarget "Amson" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D3FF6F7B2B68770E00AE6725 /* Debug */,
@@ -801,7 +813,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D3FF6F7D2B68770E00AE6725 /* Build configuration list for PBXNativeTarget "WorkoutAppTests" */ = {
+		D3FF6F7D2B68770E00AE6725 /* Build configuration list for PBXNativeTarget "AmsonTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D3FF6F7E2B68770E00AE6725 /* Debug */,
@@ -810,7 +822,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D3FF6F802B68770E00AE6725 /* Build configuration list for PBXNativeTarget "WorkoutAppUITests" */ = {
+		D3FF6F802B68770E00AE6725 /* Build configuration list for PBXNativeTarget "AmsonUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D3FF6F812B68770E00AE6725 /* Debug */,

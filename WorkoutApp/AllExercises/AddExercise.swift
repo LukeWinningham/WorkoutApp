@@ -71,10 +71,11 @@ struct AddExercise: View {
                                     .frame(width: 100.0, height: 100.0)
                                     .foregroundColor(Color(red: 18/255, green: 18/255, blue: 18/255)) // Set the foreground color to white
                             } else {
-                                Image("weightboy")
+                                Image(systemName: "figure.strengthtraining.traditional")
                                     .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .padding(.trailing, 10)
+                                    .scaledToFit() // Ensure the image fits within the frame
+                                    .frame(width: 100.0, height: 100.0)
+                                    .foregroundColor(Color(red: 18/255, green: 18/255, blue: 18/255)) // Set the foreground color to white
                             }
                         }
                     )

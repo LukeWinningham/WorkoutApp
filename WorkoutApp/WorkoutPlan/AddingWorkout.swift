@@ -260,45 +260,56 @@ struct AddView: View {
     @State private var newItem: String = ""
     @State private var keyboardHeight: CGFloat = 0
     @State private var isKeyboardVisible = false // Define isKeyboardVisible here
-
+    @State private var showingWorkoutPacks = false // State to control WorkoutView presentation
     var body: some View {
-        NavigationView {
-            ZStack(alignment: .topTrailing) {
-                Color(red: 18/255, green: 18/255, blue: 18/255)
-                    .edgesIgnoringSafeArea(.all)
-                VStack {
-                    headerView
-                    daysListView
-                }
-                // Show the text field container view conditionally
-                if isTextFieldContainerVisible {
-                    textFieldContainerView
-                        .padding(.top, 200) // Add padding to separate header from button
-                }
-                
-                addButton
-                    .padding(.top, 10) // Add padding to separate header from button
-                    .disabled(weekData.days.count >= 7) // Disable button when there are 7 days
-            }
-            .offset(y: isKeyboardVisible ? -150 : 0) // Adjust the offset based on keyboard visibility
-            .animation(.easeInOut, value: isKeyboardVisible)
-        }
-    }
+          NavigationView {
+              ZStack(alignment: .top) {
+                  Color(red: 18/255, green: 18/255, blue: 18/255)
+                      .edgesIgnoringSafeArea(.all)
+                  
+                  VStack {
+                      headerView
+                      Rectangle()
+                          .fill(Color(red: 41/255, green: 41/255, blue: 41/255))
+                          .frame(height: 2)
+                      daysListView
+                      Rectangle()
+                          .fill(Color(red: 41/255, green: 41/255, blue: 41/255))
+                          .frame(height: 2)
+                  }
+                  
+                  if isTextFieldContainerVisible {
+                      textFieldContainerView
+                          .padding(.top, 200)
+                  }
+              }
+          }
+          .sheet(isPresented: $showingWorkoutPacks) {
+              WorkoutPacks() // Present your WorkoutView here
+          }
+      }
 
     
     var headerView: some View {
         HStack {
+            workoutPackButton // Add workoutPackButton to the header
+            
             Spacer()
+            
             Text("Add A Day")
                 .font(.title)
                 .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
                 .padding()
+            
             Spacer()
+            
+            addButton
         }
-        .padding()
+      
     }
     
     var daysListView: some View {
+        
         ScrollView {
             LazyVStack {
                 ForEach(weekData.days.indices, id: \.self) { index in
@@ -313,7 +324,8 @@ struct AddView: View {
             
         }
         
-        .border(Color.gray, width: 0.2) // Apply border to List
+        
+        
         
     }
     
@@ -372,7 +384,17 @@ struct AddView: View {
         .padding(.bottom, 20) // Add some bottom padding
     }
 
-
+    var workoutPackButton: some View {
+        Button(action: {
+            showingWorkoutPacks = true // Show WorkoutView
+        }) {
+            Image(systemName: "figure.run.square.stack")
+                .resizable()
+                .frame(width: 20, height: 20)
+                .foregroundColor(Color.red)
+                .padding()
+        }
+    }
     var addButton: some View {
         Button(action: {
             // Toggle the visibility of the text field container view

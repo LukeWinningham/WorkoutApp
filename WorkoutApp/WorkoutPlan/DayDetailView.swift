@@ -41,6 +41,9 @@ struct DayDetailView: View {
             
             VStack {
                 headerView
+                Rectangle() // This creates the border line
+                    .fill(Color(red: 41/255, green: 41/255, blue: 41/255)) // Set the border color here
+                    .frame(height: 2) // Set the border thickness here
                 itemsListView
                 Spacer()
             }
@@ -307,7 +310,7 @@ struct DayDetailView: View {
                 }
             }
             .padding()
-            .border(Color.gray, width: 0.2) // Apply border to LazyVStack
+           
 
             HStack{
                 NavigationLink(destination: AllExercises().environmentObject(exercisesViewModel)) {
