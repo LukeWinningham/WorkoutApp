@@ -24,8 +24,8 @@ struct TodayView: View {
                 welcomeSection
                     NameOfDay()
                     // Otherwise, show today's tasks
-                    WorkoutList()
-                    StartButton()
+         //           WorkoutList()
+                 //   StartButton()
                 
 
                 Spacer()

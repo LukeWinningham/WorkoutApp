@@ -5,14 +5,12 @@
 //  Created by Luke Winningham on 1/30/24.
 //
 
-import SwiftUI
 import Foundation
+import SwiftUI
 import Combine
+import CloudKit
 
-
-
-
-
+// MARK: - CustomTextField
 struct CustomTextField: UIViewRepresentable {
     class Coordinator: NSObject, UITextFieldDelegate {
         @Binding var text: String
@@ -55,12 +53,13 @@ struct CustomTextField: UIViewRepresentable {
     }
 }
 
+// MARK: - KeyboardResponsiveModifier
 struct KeyboardResponsiveModifier: ViewModifier {
     @State private var offset: CGFloat = 0
 
     func body(content: Content) -> some View {
         content
-            .padding(.bottom, 30)
+            .padding(.bottom, offset)
             .onAppear(perform: subscribeToKeyboardEvents)
     }
 
@@ -80,21 +79,14 @@ struct KeyboardResponsiveModifier: ViewModifier {
     }
 }
 
+// MARK: - View Extension
 extension View {
     func keyboardResponsive() -> some View {
         self.modifier(KeyboardResponsiveModifier())
     }
 }
 
-
-extension WeekData {
-    func updateDay(_ day: Day) {
-        if let index = days.firstIndex(where: { $0.id == day.id }) {
-            days[index] = day
-            saveToUserDefaults()
-        }
-    }
-}
+// MARK: - UniqueItem
 struct UniqueItem: Identifiable, Hashable, Codable {
     let id: UUID
     var value: String
@@ -113,9 +105,7 @@ struct UniqueItem: Identifiable, Hashable, Codable {
     }
 }
 
-
-
-
+// MARK: - Day
 class Day: Identifiable, ObservableObject, Codable {
     let id: UUID
     var name: String
@@ -147,40 +137,76 @@ class Day: Identifiable, ObservableObject, Codable {
     }
 }
 
+// MARK: - WeekData
 class WeekData: ObservableObject {
     static let shared = WeekData()
 
-    @Published var days: [Day]
+    @Published var packsDays: [UUID: [Day]] = [:]
+    @Published var activePackID: UUID?
+    @Published var packIDs: [UUID] = [] // Store fetched pack IDs here
 
-    private init() {
-        self.days = WeekData.loadFromUserDefaults() ?? []
-    }
-
-    internal func saveToUserDefaults() {
-        if let encodedData = try? JSONEncoder().encode(days) {
-            UserDefaults.standard.set(encodedData, forKey: "days")
-        }
-    }
-    
-    func clearUserDefaults() {
-        UserDefaults.standard.removeObject(forKey: "days")
-        self.days = []
-    }
-    
     func addDay(withName name: String) {
+        guard let activePackID = activePackID else { return }
         let newDay = Day(name: name)
-        self.days.append(newDay)
-        saveToUserDefaults()
+
+        if var days = packsDays[activePackID] {
+            days.append(newDay)
+            packsDays[activePackID] = days
+        } else {
+            packsDays[activePackID] = [newDay]
+        }
+
+        saveDayToCloudKit(day: newDay, forPackID: activePackID)
     }
 
-    static func loadFromUserDefaults() -> [Day]? {
-        if let savedData = UserDefaults.standard.data(forKey: "days"),
-           let decodedDays = try? JSONDecoder().decode([Day].self, from: savedData) {
-            return decodedDays
+    private func saveDayToCloudKit(day: Day, forPackID packID: UUID) {
+        let record = CKRecord(recordType: "WorkoutPacks")
+        
+        // Convert UUID to CKRecordValue
+        let packRecordID = CKRecord.ID(recordName: packID.uuidString)
+        let packReference = CKRecord.Reference(recordID: packRecordID, action: .none)
+        
+        // Assuming CurrentPack is a field in PersonalData record type
+        let personalDataRecord = CKRecord(recordType: "PersonalData")
+        personalDataRecord["CurrentPack"] = packReference
+        
+        
+        // Add other Day properties to the record as needed
+
+        let publicDatabase = CKContainer.default().publicCloudDatabase
+        publicDatabase.save(record) { savedRecord, error in
+            if let error = error {
+                print("An error occurred while saving the day to CloudKit: \(error.localizedDescription)")
+            } else {
+                print("Day saved successfully to CloudKit")
+            }
         }
-        return nil
     }
-}
+
+
+    func fetchPackIDs() {
+            // Example logic to fetch pack IDs
+            let database = CKContainer.default().publicCloudDatabase
+            let query = CKQuery(recordType: "WorkoutPacks", predicate: NSPredicate(value: true))
+
+            database.perform(query, inZoneWith: nil) { [weak self] (records, error) in
+                DispatchQueue.main.async {
+                    if let records = records, error == nil {
+                        self?.packIDs = records.compactMap { record in
+                            if let idString = record["PackID"] as? String, let id = UUID(uuidString: idString) {
+                                return id
+                            }
+                            return nil
+                        }
+                    } else {
+                        print("Error fetching pack IDs: \(String(describing: error))")
+                    }
+                }
+            }
+        }
+    }
+
+// MARK: - DayRow
 struct DayRow: View {
     @ObservedObject var day: Day
     @EnvironmentObject var weekData: WeekData
@@ -188,50 +214,47 @@ struct DayRow: View {
 
     var body: some View {
         VStack {
-            HStack{
-            RoundedRectangle(cornerRadius: 10)
+            HStack {
+                RoundedRectangle(cornerRadius: 10)
                     .fill(Color(red: 41/255, green: 41/255, blue: 41/255))
+                    .frame(height: 70)
+                    .overlay(
+                        HStack {
+                            Circle()
+                                .frame(width: 50, height: 40)
+                                .shadow(radius: 5)
+                                .foregroundColor( Color(red: 0.07, green: 0.69, blue: 0.951))
+                                .opacity(1)
+                            
+                            Text(day.name)
+                                .font(.system(size: 20))
+                                .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
+                            
+                            Spacer()
+                        }
+                    )
+                    .gesture(swipeGesture)
+                    .offset(x: showingDeleteButton ? -80 : 0)
+                    .animation(.easeInOut, value: showingDeleteButton)
+                if showingDeleteButton {
+                    Button(action: {
+                        if let activePackID = weekData.activePackID,
+                           let index = weekData.packsDays[activePackID]?.firstIndex(where: { $0.id == day.id }) {
+                            weekData.packsDays[activePackID]?.remove(at: index)
+                            // Save changes or perform other necessary actions
+                        }
+                    }) {
+                        Image(systemName: "trash")
+                            .foregroundColor(.white)
+                            .padding(8)
+                            .background(Color.red)
+                            .cornerRadius(8)
+                    }
 
-                .frame(height: 70)
-                .overlay(
-                    HStack {
-                        Circle()
-                            .frame(width: 50, height: 40)
-                            .shadow(radius: 5)
-                            .foregroundColor( Color(red: 0.07, green: 0.69, blue: 0.951))
-                            .opacity(1)
-                        
-                        Text(day.name)
-                            .font(.system(size: 20))
-                            .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
-                        
-                        Spacer()
-                        
-                        
-                    }
-                )
-            
-                .gesture(swipeGesture)
-                .offset(x: showingDeleteButton ? -80 : 0)
-                .animation(.easeInOut, value: showingDeleteButton)
-            if showingDeleteButton {
-                Button(action: {
-                    if let index = weekData.days.firstIndex(where: { $0.id == day.id }) {
-                        weekData.days.remove(at: index)
-                        weekData.saveToUserDefaults()
-                        showingDeleteButton = false
-                    }
-                }) {
-                    Image(systemName: "trash")
-                        .foregroundColor(.white)
-                        .padding(8)
-                        .background(Color.red)
-                        .cornerRadius(8)
+                    .transition(.move(edge: .trailing))
+                    .frame(width: 80)
                 }
-                .transition(.move(edge: .trailing))
-                .frame(width: 80)
             }
-        }
             Divider()
                 .background(Color(red: 160/255, green: 160/255, blue: 160/255))
         }
@@ -254,94 +277,73 @@ struct DayRow: View {
             }
     }
 }
+
+// MARK: - AddView
 struct AddView: View {
-    @EnvironmentObject var weekData: WeekData  // Access WeekData from the environment
+    @EnvironmentObject var weekData: WeekData
     @State private var isTextFieldContainerVisible = false
     @State private var newItem: String = ""
     @State private var keyboardHeight: CGFloat = 0
-    @State private var isKeyboardVisible = false // Define isKeyboardVisible here
+    @State private var isKeyboardVisible = false
     @State private var showingWorkoutPacks = false // State to control WorkoutView presentation
-    var body: some View {
-          NavigationView {
-              ZStack(alignment: .top) {
-                  Color(red: 18/255, green: 18/255, blue: 18/255)
-                      .edgesIgnoringSafeArea(.all)
-                  
-                  VStack {
-                      headerView
-                      Rectangle()
-                          .fill(Color(red: 41/255, green: 41/255, blue: 41/255))
-                          .frame(height: 2)
-                      daysListView
-                      Rectangle()
-                          .fill(Color(red: 41/255, green: 41/255, blue: 41/255))
-                          .frame(height: 2)
-                  }
-                  
-                  if isTextFieldContainerVisible {
-                      textFieldContainerView
-                          .padding(.top, 200)
-                  }
-              }
-          }
-          .sheet(isPresented: $showingWorkoutPacks) {
-              WorkoutPacks() // Present your WorkoutView here
-          }
-      }
 
-    
+    var body: some View {
+        NavigationView {
+            ZStack(alignment: .top) {
+                Color(red: 18/255, green: 18/255, blue: 18/255).edgesIgnoringSafeArea(.all)
+                VStack {
+                    headerView
+                    daysListView
+                }    .onAppear {
+                    weekData.fetchPackIDs()
+                }
+                if isTextFieldContainerVisible {
+                    textFieldContainerView.padding(.top, 200)
+                }
+                
+            }
+            .sheet(isPresented: $showingWorkoutPacks) {
+                      WorkoutPacks().environmentObject(weekData)
+                  }
+            
+        }
+    }
+
     var headerView: some View {
         HStack {
-            workoutPackButton // Add workoutPackButton to the header
-            
+            workoutPackButton
             Spacer()
-            
-            Text("Add A Day")
-                .font(.title)
-                .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
-                .padding()
-            
+            Text("Add A Day").font(.title).foregroundColor(Color.white)
             Spacer()
-            
             addButton
         }
-      
     }
-    
+
     var daysListView: some View {
-        
         ScrollView {
             LazyVStack {
-                ForEach(weekData.days.indices, id: \.self) { index in
-                    let day = weekData.days[index]
-                    NavigationLink(destination: DayDetailView(day: day).environmentObject(weekData)) {
-                        DayRow(day: day)
-                            .gesture(longPressGesture(index)) // Attach long press gesture to each DayRow
-                    }
+                // Display days for the active workout pack
+                ForEach(weekData.packsDays[weekData.activePackID ?? UUID()] ?? [], id: \.id) { day in
+                    Text(day.name)
+                        .foregroundColor(.white)
+                        .padding()
                 }
             }
-            .padding(.horizontal)
-            
         }
-        
-        
-        
-        
     }
-    
+
     // Function to create a long press gesture for reordering
     func longPressGesture(_ index: Int) -> some Gesture {
         LongPressGesture(minimumDuration: 0.5)
             .onEnded { _ in
                 withAnimation {
                     // Move the selected day to the first position
-                    weekData.days.move(fromOffsets: IndexSet(integer: index), toOffset: 0)
-                    weekData.saveToUserDefaults()
+                    weekData.packsDays[weekData.activePackID ?? UUID()]?.move(fromOffsets: IndexSet(integer: index), toOffset: 0)
+                    // Update UserDefaults or CloudKit here if needed
                 }
             }
     }
-    
-    // Text field container view
+
     // Text field container view
     var textFieldContainerView: some View {
         HStack {
@@ -367,9 +369,7 @@ struct AddView: View {
                     // Dismiss the keyboard
                     UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                     isTextFieldContainerVisible = false
-
                 }
-                
             }
             .padding(.trailing)
         }
@@ -377,7 +377,6 @@ struct AddView: View {
         .background(
             RoundedRectangle(cornerRadius: 10) // Rounded rectangle background for the entire container
                 .fill(Color(red: 41/255, green: 41/255, blue: 41/255))
-
                 .shadow(radius: 3) // Add shadow
         )
         .padding()
@@ -395,6 +394,7 @@ struct AddView: View {
                 .padding()
         }
     }
+    
     var addButton: some View {
         Button(action: {
             // Toggle the visibility of the text field container view
@@ -410,14 +410,10 @@ struct AddView: View {
 }
 
 
-
-
+// MARK: - AddView_Previews
 struct AddView_Previews: PreviewProvider {
     static var previews: some View {
-        
         AddView()
             .environmentObject(WeekData.shared)
     }
 }
-
-   

@@ -18,7 +18,7 @@ struct PersonalData: View {
     @State private var birthday = Date()
     @State private var showingAlert = false
     @State private var alertMessage = ""
-
+    
     var body: some View {
         ZStack {
             Color(red: 217/255, green: 217/255, blue: 217/255).edgesIgnoringSafeArea(.all)
@@ -38,7 +38,7 @@ struct PersonalData: View {
                                 .padding(.horizontal)
                         )
                         .foregroundColor(/*@START_MENU_TOKEN@*/Color.gray/*@END_MENU_TOKEN@*/)
-
+                    
                     RoundedRectangle(cornerRadius: 10)
                         .frame(height: 70)
                         .overlay(
@@ -62,10 +62,10 @@ struct PersonalData: View {
                                     }
                                 }
                             }
-                            .padding(.horizontal)
+                                .padding(.horizontal)
                         )
                         .foregroundColor(/*@START_MENU_TOKEN@*/Color.gray/*@END_MENU_TOKEN@*/)
-
+                    
                     RoundedRectangle(cornerRadius: 10)
                         .frame(height: 70)
                         .overlay(
@@ -79,10 +79,10 @@ struct PersonalData: View {
                                     }
                                 }
                             }
-                            .padding(.horizontal)
+                                .padding(.horizontal)
                         )
                         .foregroundColor(/*@START_MENU_TOKEN@*/Color.gray/*@END_MENU_TOKEN@*/)
-
+                    
                     RoundedRectangle(cornerRadius: 10)
                         .frame(height: 70)
                         .overlay(
@@ -90,7 +90,7 @@ struct PersonalData: View {
                                 .padding(.horizontal)
                         )
                         .foregroundColor(/*@START_MENU_TOKEN@*/Color.gray/*@END_MENU_TOKEN@*/)
-
+                    
                 }
                 Button("Save and Next!", action: saveToCloudKit)
                     .padding()
@@ -106,13 +106,13 @@ struct PersonalData: View {
         let database = container.publicCloudDatabase
         let predicate = NSPredicate(format: "username == %@", username)
         let query = CKQuery(recordType: "PersonalData", predicate: predicate)
-
+        
         let queryOperation = CKQueryOperation(query: query)
         // Optionally, specify desired keys if you want to limit the fields returned by the query
         queryOperation.desiredKeys = ["username"]
         // You can also limit the number of results returned
         queryOperation.resultsLimit = 1
-
+        
         var isUnique = true
         queryOperation.recordMatchedBlock = { (recordID, result) in
             switch result {
@@ -124,7 +124,7 @@ struct PersonalData: View {
                 print("Record fetch error: \(error.localizedDescription)")
             }
         }
-
+        
         queryOperation.queryResultBlock = { result in
             DispatchQueue.main.async {
                 switch result {
@@ -136,33 +136,48 @@ struct PersonalData: View {
                 }
             }
         }
-
+        
         database.add(queryOperation)
     }
-
-
+    
     func saveToCloudKit() {
-        guard let userIdentifier = authViewModel.userIdentifier else { return }
-
-        let container = CKContainer.default()
-        let database = container.publicCloudDatabase
-
-        let profileRecord = CKRecord(recordType: "PersonalData")
-        profileRecord["firstName"] = firstName
-        profileRecord["username"] = username
-        profileRecord["feet"] = feet
-        profileRecord["inches"] = inches
-        profileRecord["weight"] = weight
-        profileRecord["birthday"] = birthday
-        profileRecord["userIdentifier"] = userIdentifier
-
-        database.save(profileRecord) { (record, error) in
-            if let error = error {
-                print("Error saving profile to CloudKit: \(error.localizedDescription)")
-            } else {
-                print("Profile saved to CloudKit successfully.")
+        guard !firstName.isEmpty, !username.isEmpty else {
+            alertMessage = "First name and username cannot be empty."
+            showingAlert = true
+            return
+        }
+        
+        checkUsernameUnique(username: username) { isUnique in
+            guard isUnique else {
+                self.alertMessage = "Username is already taken. Please choose another one."
+                self.showingAlert = true
+                return
+            }
+            
+            guard let userIdentifier = self.authViewModel.userIdentifier else { return }
+            
+            let container = CKContainer.default()
+            let database = container.publicCloudDatabase
+            
+            let profileRecord = CKRecord(recordType: "PersonalData")
+            profileRecord["firstName"] = self.firstName
+            profileRecord["username"] = self.username
+            profileRecord["feet"] = self.feet
+            profileRecord["inches"] = self.inches
+            profileRecord["weight"] = self.weight
+            profileRecord["birthday"] = self.birthday
+            profileRecord["userIdentifier"] = CKRecord.Reference(recordID: CKRecord.ID(recordName: userIdentifier), action: .none)
+            
+            database.save(profileRecord) { record, error in
                 DispatchQueue.main.async {
-                    self.authViewModel.completeProfile()
+                    if let error = error {
+                        self.alertMessage = "Error saving profile: \(error.localizedDescription)"
+                        self.showingAlert = true
+                    } else {
+                        self.alertMessage = "Profile saved successfully."
+                        self.showingAlert = true
+                        self.authViewModel.completeProfile()
+                    }
                 }
             }
         }

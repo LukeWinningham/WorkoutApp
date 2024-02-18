@@ -3,6 +3,7 @@
 //  WorkoutApp
 // Take the name of the exercise and make it the key to a dictionary an eachh weight will be a new value to the key
 //  Created by Luke Winningham on 1/31/24.
+/*
 import SwiftUI
 import Combine
 
@@ -303,3 +304,4 @@ struct WorkoutDetails_Previews: PreviewProvider {
     }
 }
 
+*/

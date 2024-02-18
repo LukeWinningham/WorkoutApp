@@ -26,6 +26,7 @@
 		D310983C2B76E3C9002A40DB /* DayDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D310983B2B76E3C9002A40DB /* DayDetailView.swift */; };
 		D35229E12B7B1C1D004493B8 /* AddExercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = D35229E02B7B1C1D004493B8 /* AddExercise.swift */; };
 		D3813AC32B8085D40027CD83 /* WorkoutPacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3813AC22B8085D40027CD83 /* WorkoutPacks.swift */; };
+		D3813AC52B809F240027CD83 /* PackViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3813AC42B809F240027CD83 /* PackViewModel.swift */; };
 		D387C4322B6B4A0A0064835E /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = D387C4312B6B4A0A0064835E /* Exercise.swift */; };
 		D39750E12B6E46130005280F /* Charts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D39750E02B6E46130005280F /* Charts.framework */; };
 		D39750E32B6E53320005280F /* Chart.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39750E22B6E53320005280F /* Chart.swift */; };
@@ -84,6 +85,7 @@
 		D310983B2B76E3C9002A40DB /* DayDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayDetailView.swift; sourceTree = "<group>"; };
 		D35229E02B7B1C1D004493B8 /* AddExercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddExercise.swift; sourceTree = "<group>"; };
 		D3813AC22B8085D40027CD83 /* WorkoutPacks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutPacks.swift; sourceTree = "<group>"; };
+		D3813AC42B809F240027CD83 /* PackViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackViewModel.swift; sourceTree = "<group>"; };
 		D387C4312B6B4A0A0064835E /* Exercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exercise.swift; sourceTree = "<group>"; };
 		D39750E02B6E46130005280F /* Charts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Charts.framework; path = System/Library/Frameworks/Charts.framework; sourceTree = SDKROOT; };
 		D39750E22B6E53320005280F /* Chart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chart.swift; sourceTree = "<group>"; };
@@ -303,6 +305,7 @@
 				D31098222B721139002A40DB /* Profile */,
 				D3FF6F602B68770E00AE6725 /* Preview Assets.xcassets */,
 				D31098182B719BF3002A40DB /* Preview Content */,
+				D3813AC42B809F240027CD83 /* PackViewModel.swift */,
 			);
 			path = WorkoutApp;
 			sourceTree = "<group>";
@@ -460,6 +463,7 @@
 				D310982E2B72B825002A40DB /* LogOn.swift in Sources */,
 				D3C6AEA72B7B402700ED9FD7 /* DiscoverPacks.swift in Sources */,
 				D31098212B71F44A002A40DB /* NavigationState.swift in Sources */,
+				D3813AC52B809F240027CD83 /* PackViewModel.swift in Sources */,
 				D3EA0B0B2B6A281000BA4852 /* WorkoutDetails.swift in Sources */,
 				D3C6AEAB2B7B4F0E00ED9FD7 /* Trending.swift in Sources */,
 				D310980F2B7196B3002A40DB /* NavBar.swift in Sources */,

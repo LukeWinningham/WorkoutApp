@@ -15,6 +15,7 @@ class AuthViewModel: ObservableObject {
             UserDefaults.standard.set(isUserAuthenticated, forKey: "isUserSignedIn")
             if !isUserAuthenticated {
                 isProfileCompleted = false
+                UserDefaults.standard.removeObject(forKey: "userIdentifier") // Remove userIdentifier when not authenticated
             }
         }
     }
@@ -26,12 +27,14 @@ class AuthViewModel: ObservableObject {
     var userIdentifier: String?
 
     init() {
+        self.userIdentifier = UserDefaults.standard.string(forKey: "userIdentifier") // Retrieve userIdentifier on init
         if isUserAuthenticated {
             checkProfileCompletion()
         }
     }
 
     func signIn(userIdentifier: String) {
+        UserDefaults.standard.set(userIdentifier, forKey: "userIdentifier") // Save userIdentifier on sign in
         self.isUserAuthenticated = true
         self.userIdentifier = userIdentifier
         checkProfileCompletion()
@@ -40,12 +43,12 @@ class AuthViewModel: ObservableObject {
     func signOut() {
         self.isUserAuthenticated = false
         self.userIdentifier = nil
+        UserDefaults.standard.removeObject(forKey: "userIdentifier") // Clear userIdentifier on sign out
     }
 
     func completeProfile() {
         self.isProfileCompleted = true
     }
-
     func checkProfileCompletion() {
         guard let userIdentifier = self.userIdentifier, isUserAuthenticated else { return }
 
