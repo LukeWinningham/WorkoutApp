@@ -8,17 +8,8 @@ import CloudKit
 import SwiftUI
 import Combine
 
-
-// Define a structure to represent an aggregated exercise
-struct AggregatedExercise: Identifiable {
-    var id = UUID() // Provide a unique identifier
-    var name: String
-    var totalSets: Int
-    var time: Int?
-}
-
 class DayExercisesViewModel: ObservableObject {
-    @Published var exercises: [AggregatedExercise] = []
+    @Published var exercises: [CKRecord] = []
     
     func fetchExercises(forDayID dayID: UUID) {
         let database = CKContainer.default().publicCloudDatabase
@@ -37,22 +28,11 @@ class DayExercisesViewModel: ObservableObject {
                     return
                 }
 
-                // Aggregate exercises by their unique identifier (e.g., "ChosenExercise")
-                let groupedExercises = Dictionary(grouping: records, by: { $0["ChosenExercise"] as? String ?? "Unknown" })
-                
-                // Map grouped exercises to AggregatedExercise instances
-                let aggregatedExercises = groupedExercises.map { (exerciseName, records) -> AggregatedExercise in
-                    let totalSets = records.reduce(0) { $0 + ($1["Sets"] as? Int ?? 1) } // Sum up all sets
-                    let time = records.compactMap { $0["Time"] as? Int }.first // Assume time is the same for all sets
-                    return AggregatedExercise(name: exerciseName, totalSets: totalSets, time: time)
-                }
-
-                self?.exercises = aggregatedExercises
+                self?.exercises = records
             }
         }
     }
 }
-
 
 struct DayDetailView: View {
     @StateObject private var viewModel = DayExercisesViewModel()
