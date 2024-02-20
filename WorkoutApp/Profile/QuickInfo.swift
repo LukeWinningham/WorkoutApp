@@ -86,7 +86,6 @@ struct QuickInfo_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             QuickInfo()
-                .environmentObject(WeekData.shared)
                 .environmentObject(WorkoutData())
         }
     }

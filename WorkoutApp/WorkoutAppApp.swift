@@ -38,7 +38,6 @@ struct WorkoutAppApp: App {
                         .environmentObject(authViewModel) // Provide authViewModel to your LogOn view
                 }
             }
-            .environmentObject(WeekData.shared) // Inject WeekData.shared as an Environment Object
         }
     }
 }

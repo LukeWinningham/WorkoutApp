@@ -4,340 +4,184 @@
 //
 //  Created by Luke Winningham on 2/9/24.
 //
-/*
+import CloudKit
 import SwiftUI
 import Combine
 
 
+// Define a structure to represent an aggregated exercise
+struct AggregatedExercise: Identifiable {
+    var id = UUID() // Provide a unique identifier
+    var name: String
+    var totalSets: Int
+    var time: Int?
+}
+
+class DayExercisesViewModel: ObservableObject {
+    @Published var exercises: [AggregatedExercise] = []
+    
+    func fetchExercises(forDayID dayID: UUID) {
+        let database = CKContainer.default().publicCloudDatabase
+        let predicate = NSPredicate(format: "DayID == %@", CKRecord.ID(recordName: dayID.uuidString))
+        let query = CKQuery(recordType: "PackExercises", predicate: predicate)
+
+        database.perform(query, inZoneWith: nil) { [weak self] (records, error) in
+            DispatchQueue.main.async {
+                if let error = error {
+                    print("Error fetching exercises for day ID \(dayID): \(error.localizedDescription)")
+                    return
+                }
+
+                guard let records = records else {
+                    print("No records found for day ID \(dayID)")
+                    return
+                }
+
+                // Aggregate exercises by their unique identifier (e.g., "ChosenExercise")
+                let groupedExercises = Dictionary(grouping: records, by: { $0["ChosenExercise"] as? String ?? "Unknown" })
+                
+                // Map grouped exercises to AggregatedExercise instances
+                let aggregatedExercises = groupedExercises.map { (exerciseName, records) -> AggregatedExercise in
+                    let totalSets = records.reduce(0) { $0 + ($1["Sets"] as? Int ?? 1) } // Sum up all sets
+                    let time = records.compactMap { $0["Time"] as? Int }.first // Assume time is the same for all sets
+                    return AggregatedExercise(name: exerciseName, totalSets: totalSets, time: time)
+                }
+
+                self?.exercises = aggregatedExercises
+            }
+        }
+    }
+}
 
 
 struct DayDetailView: View {
-    @ObservedObject var day: Day
-    @EnvironmentObject var weekData: WeekData
+    @StateObject private var viewModel = DayExercisesViewModel()
+    var dayID: UUID
+    var dayName: String
     @Environment(\.presentationMode) var presentationMode
-    @State private var newItem: String = ""
-    @State private var descriptionText: String = ""
-    @State private var setsText: String = ""
-    @State private var repsText: String = ""
-    @State private var editingIndex: Int? = nil // Add this line to keep track of the item being edited
-    @State private var showingDeleteButton = false
-
-    @State private var isTextFieldContainerVisible = false
-    @State private var isKeyboardVisible = false
-    @State private var timeText: String = "" // Add this line to keep track of the time input
-    @State private var errorMessage: String = ""
-    @EnvironmentObject var exercisesViewModel: ExercisesViewModel
-
 
     var body: some View {
         ZStack {
-            // Tap gesture added to this Color view
-            Color(red: 18/255, green: 18/255, blue: 18/255)
-                .edgesIgnoringSafeArea(.all)
-                .onTapGesture {
-                    self.isTextFieldContainerVisible = false
-                    self.dismissKeyboard()
-                }
-            
+            Color(red: 18/255, green: 18/255, blue: 18/255).edgesIgnoringSafeArea(.all)
+                .navigationBarBackButtonHidden(true)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button(action: {
+                            self.presentationMode.wrappedValue.dismiss()
+                        }) {
+                            Image(systemName: "chevron.backward")
+                                .imageScale(.small)
+                                .font(.title)
+                                .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
+                                .shadow(radius: 3)
+                        }
+                    }
+                    }
             VStack {
-                headerView
-                Rectangle() // This creates the border line
-                    .fill(Color(red: 41/255, green: 41/255, blue: 41/255)) // Set the border color here
-                    .frame(height: 2) // Set the border thickness here
-                itemsListView
-                Spacer()
-            }
-            
-            if isTextFieldContainerVisible {
-                textFieldContainerView
-            }
-        }
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: {
-                    self.presentationMode.wrappedValue.dismiss()
-                }) {
-                    Image(systemName: "chevron.backward")
-                        .imageScale(.small)
-                        .font(.title)
-                        .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
-                        .shadow(radius: 3)
-                }
-            }
-        }
+                Text(dayName)
+                    .font(.title)
+                    .foregroundColor(Color.white)
+                    .padding()
 
-        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
-            self.isKeyboardVisible = true
-        }
-        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
-            self.isKeyboardVisible = false
-        }
-    }
-    
-    var headerView: some View {
-        Text(day.name)
-            .font(.title)
-            .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
-            .padding()
-    }
-    
-    
-    var textFieldContainerView: some View {
-        VStack {
-            
-            VStack(spacing: 10) {
-          
-            
-                CustomTextField(placeholder: "Name of Exercise", text: $newItem, placeholderTextColor: UIColor.lightGray)
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(5)
-                
-                    .padding(.horizontal)
-                    .frame(height: 50)
-                
-                CustomTextField(placeholder: "Number of Sets (1 - 10)", text: $setsText, placeholderTextColor: UIColor.lightGray)
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(5)
-                    .padding(.horizontal)
-                    .foregroundColor(Color.black)
-                    .frame(height: 50)
-                CustomTextField(placeholder: "Number of Reps (1 - 99)", text: $repsText, placeholderTextColor: UIColor.lightGray)
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(5)
-                    .padding(.horizontal)
-                    .foregroundColor(Color.black)
-                    .frame(height: 50)
-                CustomTextField(placeholder: "Time (minutes)", text: $timeText, placeholderTextColor: UIColor.lightGray)
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(5)
-                    .padding(.horizontal)
-                    .foregroundColor(Color.black)
-                    .frame(height: 50)
-                Text(errorMessage)
-                    .foregroundColor(.red)
-                    .font(.system(size: 14))
-                
-                
-                Button("Save") {
-                    withAnimation {
-                        // Check if at least one of sets and reps or time is provided
-                        if !newItem.isEmpty {
-                            if let sets = Int(setsText.trimmingCharacters(in: .whitespaces)), let reps = Int(repsText.trimmingCharacters(in: .whitespaces)), sets > 0, sets < 11, reps < 100, reps > 0 {
-                                if let time = Int(timeText.trimmingCharacters(in: .whitespaces)), time > 0, time < 999 {
-                                    errorMessage = "Please provide either Sets and Reps OR Time, but not both."
-                                } else {
-                                    if let editingIndex = self.editingIndex {
-                                        // Editing an existing item
-                                        if editingIndex < day.items.count {
-                                            var editedItem = day.items[editingIndex]
-                                            editedItem.value = newItem
-                                            editedItem.numberSets = sets
-                                            editedItem.numberReps = reps
-                                            editedItem.time = nil // Reset time
-                                            editedItem.description = descriptionText
+                ScrollView {
+                    LazyVStack {
+                        ForEach(viewModel.exercises, id: \.recordID) { exercise in
+                            HStack {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color(red: 41/255, green: 41/255, blue: 41/255))
+                                    .frame(height: 70)
+                                    .shadow(radius: 5)
+                                    .overlay(
+                                        HStack(spacing: 15) {
                                             
-                                            // Update the item at editingIndex
-                                            day.items[editingIndex] = editedItem
-                                            weekData.updateDay(day)
-                                        }
-                                    } else {
-                                        // Adding a new workout with Sets and Reps
-                                        let newItemToAdd = UniqueItem(value: newItem, numberSets: sets, numberReps: reps, time: nil, description: descriptionText)
-                                        day.items.append(newItemToAdd)
-                                        weekData.updateDay(day)
-                                    
-                                    }
+                                            ZStack {
+                                                // Larger blue circle as the background
+                                                Circle()
+                                                    .frame(width: 50, height: 50) // Size of the outer circle
+                                                    .foregroundColor(Color(red: 0/255, green: 117/255, blue: 255/255)) // Blue background for the outer circle
+                                                
+                                                // Inner ZStack with the smaller circle, white stroke, and image
+                                                ZStack {
+                                                    Circle()
+                                                        .frame(width: 50, height: 50) // Smaller circle size for the inner content
+                                                        .foregroundColor(Color(red: 0/255, green: 117/255, blue: 255/255)) // Blue background for the inner circle
 
-                                    // Reset fields and hide container
-                                    newItem = ""
-                                    setsText = ""
-                                    repsText = ""
-                                    timeText = ""
-                                    descriptionText = ""
-                                    errorMessage = ""
-                                    isTextFieldContainerVisible = false
-                                    self.editingIndex = nil
-                                }
-                            } else if let time = Int(timeText.trimmingCharacters(in: .whitespaces)), time > 0, time < 999 {
-                                if let editingIndex = self.editingIndex {
-                                    // Editing an existing item
-                                    if editingIndex < day.items.count {
-                                        var editedItem = day.items[editingIndex]
-                                        editedItem.value = newItem
-                                        editedItem.numberSets = nil // Reset sets
-                                        editedItem.numberReps = nil // Reset reps
-                                        editedItem.time = time
-                                        editedItem.description = descriptionText
+                                                    Circle()
+                                                        .stroke(Color.white, lineWidth: 4) // White stroke for the inner circle
+                                                        .frame(width: 50, height: 50) // Matching size with the inner blue circle
+
+                                                    // Conditional statement to choose the image
+                                                    if let _ = exercise["Time"] as? Int {
+                                                        // Time-based exercise image
+                                                        Image(systemName: "figure.run")
+                                                            .resizable()
+                                                            .scaledToFit()
+                                                            .frame(width: 30, height: 30) // Image size for the inner content
+                                                            .foregroundColor(Color(red: 18/255, green: 18/255, blue: 18/255)) // Image color for the inner content
+                                                    } else {
+                                                        // Other exercises image
+                                                        Image(systemName: "figure.strengthtraining.traditional")
+                                                            .resizable()
+                                                            .scaledToFit()
+                                                            .frame(width: 30, height: 30) // Image size for the inner content
+                                                            .foregroundColor(Color(red: 18/255, green: 18/255, blue: 18/255)) // Image color for the inner content
+                                                    }
+                                                }
+                                            }
+                                            
                                         
-                                        // Update the item at editingIndex
-                                        day.items[editingIndex] = editedItem
-                                        weekData.updateDay(day)
-                                    }
-                                } else {
-                                    // Adding a new workout with Time
-                                    let newItemToAdd = UniqueItem(value: newItem, numberSets: nil, numberReps: nil, time: time, description: descriptionText)
-                                    day.items.append(newItemToAdd)
-                                    weekData.updateDay(day)
-                                }
-                                
-                                // Reset fields and hide container
-                                newItem = ""
-                                setsText = ""
-                                repsText = ""
-                                timeText = ""
-                                descriptionText = ""
-                                errorMessage = ""
-                                isTextFieldContainerVisible = false
-                                self.editingIndex = nil
-                            } else {
-                                errorMessage = "Please provide either Sets and Reps OR Time."
-                            }
-                        }
-                    }
-                }
-
-                
-                .padding()
-            }
-            .background(Color(UIColor.white))  // Use system background color
-            .cornerRadius(10)
-            .shadow(radius: 5)
-            .padding()
-        }
-        .edgesIgnoringSafeArea(.all)  // Ensure it covers the entire screen
-        .transition(.move(edge: .bottom))
-        .animation(.default, value: isTextFieldContainerVisible)  // Apply animation based on isTextFieldContainerVisible
-        .keyboardResponsive() // Aply the custom keyboard responsive modifier
-    }
-
-        
-        private func dismissKeyboard() {
-            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-        }
-    private func editExercise(at index: Int) {
-        editingIndex = index // Set the index of the item being edited
-        let item = day.items[index]
-        newItem = item.value
-        setsText = "\(item.numberSets ?? 0)" // Use nil coalescing operator to provide a default value
-        repsText = "\(item.numberReps ?? 0)" // Use nil coalescing operator to provide a default value
-        timeText = "\(item.time ?? 0)" // Use nil coalescing operator to provide a default value
-        descriptionText = item.description
-        isTextFieldContainerVisible = true // Show the text field container for editing
-    }
-
-    var itemsListView: some View {
-        ScrollView {
-            LazyVStack {
-                ForEach(day.items.indices, id: \.self) { index in
-                    let item = day.items[index]
-                    HStack {
-                        RoundedRectangle(cornerRadius: 10) // Adjust cornerRadius as needed
-                            .fill(Color(red: 41/255, green: 41/255, blue: 41/255))
-// Use any color that fits your design
-                            .frame(height: 70) // Adjust height as needed
-                            .shadow(radius: 5) // Adjust shadow radius as needed
-                            .overlay(
-                                HStack {
-                                    Circle()
-                                        .frame(width: 50, height: 40)
-                                        .shadow(radius: 5)
-                                        .foregroundColor(Color(red: 0.07, green: 0.69, blue: 0.951))
-                                        .overlay(
-                                            Image("weightboy")
-                                                .resizable() // Allows the image to be resized
-                                                .aspectRatio(contentMode: .fill) // Keeps the aspect ratio and fills
-                                                .padding(.trailing, 2)
-                                        )
-                                    VStack(alignment: .leading){
-                                        Text(item.value)
-                                            .font(.system(size: 20))
-                                            .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
-
-                                        if let sets = item.numberSets, let reps = item.numberReps {
-                                            Text("\(sets) Sets of \(reps) Reps")
-                                                .font(.system(size: 12))
-                                                .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
-                                        } else if let time = item.time {
-                                            Text("Time: \(time) minutes")
-                                                .font(.system(size: 12))
-                                                .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
+                                            VStack(alignment: .leading) {
+                                                Text(exercise["ChosenExercise"] as? String ?? "Unknown Exercise")
+                                                    .font(.system(size: 20))
+                                                    .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
+                                                
+                                                // Assuming you have "Sets" and "Reps" fields in your CKRecord
+                                                if let sets = exercise["Sets"] as? Int {
+                                                    Text("\(sets) Sets")
+                                                        .font(.system(size: 12))
+                                                        .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
+                                                }
+                                                else if let time = exercise["Time"] as? Int {
+                                                    Text("Time: \(time) minutes")
+                                                        .font(.system(size: 12))
+                                                        .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
+                                                }
+                                            }
+                                            Spacer()
                                         }
-                                    }
-                                    Spacer()
-                
-                                }
-                            )
-                        
-                            .offset(x: showingDeleteButton ? -80 : 0) // Adjust the offset based on showingDeleteButton
-                            .animation(.easeInOut, value: showingDeleteButton)
-
-                        if showingDeleteButton {
-                            Button(action: {
-                                // Delete the item
-                                day.items.remove(at: index)
-                                weekData.updateDay(day)
-                            }) {
-                                Image(systemName: "trash")
-                                    .foregroundColor(.white)
-                                    .padding(8)
-                                    .background(Color.red)
-                                    .cornerRadius(8)
+                                            .padding(.leading, 20) // Add leading padding to push content to the right
+                                    )
+                                    
                             }
+                            .padding(.horizontal)
+                            .padding(.top, 5)
+                           
+
                         }
-                        Spacer()
                     }
-                    .padding(10.0)
-                    .gesture(
-                        DragGesture()
-                            .onChanged { value in
-                                if value.translation.width < -50 {
-                                    showingDeleteButton = true
-                                } else {
-                                    showingDeleteButton = false
-                                }
-                            }
-                            .onEnded { value in
-                                if value.translation.width > -30 {
-                                    showingDeleteButton = false
-                                }
-                            }
-                    )
                 }
-            }
-            .padding()
-           
-
-            HStack{
-                NavigationLink(destination: AllExercises().environmentObject(exercisesViewModel)) {
 
 
+                Spacer()
+
+                NavigationLink(destination: AllExercises(dayID: CKRecord.ID(recordName: dayID.uuidString))) {
                     Image(systemName: "plus.circle.fill")
                         .resizable()
                         .frame(width: 50, height: 50)
                         .foregroundColor(Color(red: 0/255, green: 211/255, blue: 255/255))
+                        .padding()
                 }
-                .padding()
+
             }
-            
-                 }
         }
-    }
-
-
-
-
-struct DayDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        let sampleDay = Day(name: "Monday", items: [UniqueItem(value: "Push-Ups", numberSets: 3, numberReps: 10, time: nil, description: "Standard push-ups")])
-        DayDetailView(day: sampleDay)
-            .environmentObject(WeekData.shared)
-            .environmentObject(ExercisesViewModel()) // Provide a sample ExercisesViewModel
+        .onAppear {
+            viewModel.fetchExercises(forDayID: dayID)
+        }
     }
 }
 
-*/
+struct DayDetailView_Previews: PreviewProvider {
+    static var previews: some View {
+        DayDetailView(dayID: UUID(), dayName: "Monday")
+    }
+}

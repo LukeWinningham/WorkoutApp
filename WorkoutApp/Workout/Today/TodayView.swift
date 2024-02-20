@@ -9,7 +9,6 @@ import SwiftUI
 import Combine
 
 struct TodayView: View {
-    @EnvironmentObject var weekData: WeekData
     @EnvironmentObject var workoutData: WorkoutData // Access WorkoutData from the environment
     @State private var showingAddView = false
     @State private var showingExerciseView = false
@@ -61,7 +60,6 @@ struct TodayView: View {
     struct Today_Previews: PreviewProvider {
         static var previews: some View {
             TodayView()
-                .environmentObject(WeekData.shared)
                 .environmentObject(WorkoutData())
         }
     }

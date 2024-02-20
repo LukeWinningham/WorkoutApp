@@ -12,7 +12,6 @@ import Combine
 
 struct WorkoutPacks: View {
     @EnvironmentObject var authViewModel: AuthViewModel
-    @EnvironmentObject var weekData: WeekData
     @State private var packs = [UUID]()
     @State private var selectedPackID: UUID?
 
@@ -257,7 +256,6 @@ struct WorkoutPacks: View {
 struct WorkoutPacks_Previews: PreviewProvider {
     static var previews: some View {
         WorkoutPacks()
-            .environmentObject(WeekData.shared)
             .environmentObject(AuthViewModel())
 
     }

@@ -28,12 +28,10 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         // Initialize your environment objects
-        let weekData = WeekData.shared
         let workoutData = WorkoutData()
         NavigationView {
             // Provide the environment objects to ContentView
             ContentView()
-                .environmentObject(weekData)
                 .environmentObject(workoutData)
         }
     }

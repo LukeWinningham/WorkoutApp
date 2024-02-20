@@ -75,7 +75,6 @@ struct TopProfile_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             TopProfile()
-                .environmentObject(WeekData.shared)
                 .environmentObject(WorkoutData())
         }
     }

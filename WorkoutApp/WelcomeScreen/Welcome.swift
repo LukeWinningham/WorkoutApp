@@ -12,7 +12,6 @@ struct Welcome: View {
     @EnvironmentObject var navigationState: NavigationState
 
 
-    @EnvironmentObject var weekData: WeekData
     @EnvironmentObject var workoutData: WorkoutData // Access WorkoutData from the environment
     @State private var selectedExerciseIndex: Int?
 
@@ -80,13 +79,9 @@ struct Welcome: View {
 struct Welcome_Previews: PreviewProvider {
     static var previews: some View {
         // Initialize your environment objects
-        let weekData = WeekData.shared
-        let workoutData = WorkoutData()
         NavigationView {
             // Provide the environment objects to ContentView
             Welcome()
-                .environmentObject(weekData)
-                .environmentObject(workoutData)
         }
     }
 }

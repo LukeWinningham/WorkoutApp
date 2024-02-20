@@ -9,7 +9,6 @@ import SwiftUI
 import Combine
 
 struct ProfileView: View {
-    @EnvironmentObject var weekData: WeekData
     @EnvironmentObject var workoutData: WorkoutData
    
     @Environment(\.presentationMode) var presentationMode

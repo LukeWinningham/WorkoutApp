@@ -4,11 +4,20 @@
 //
 //  Created by Luke Winningham on 2/10/24.
 //
+
+
+
+
 import SwiftUI
 import Combine
+import CloudKit
+
+
+
 
 struct AllExercises: View {
     @Environment(\.presentationMode) var presentationMode
+    var dayID: CKRecord.ID  // Add this to accept dayID
 
     @State private var searchText = ""
     @State private var selectedFilter: String? = nil
@@ -72,7 +81,7 @@ struct AllExercises: View {
                 }
                 ScrollView {
                     ForEach(filteredExercises, id: \.name) { exerciseDisplay in
-                     NavigationLink(destination: AddExercise(exerciseName: exerciseDisplay.name, exerciseCategory: exerciseDisplay.category)) {
+                        NavigationLink(destination: AddExercise(exerciseName: exerciseDisplay.name, exerciseCategory: exerciseDisplay.category, dayID: dayID)) {
                       VStack(alignment: .leading)
                          {
                              Text(exerciseDisplay.name)
@@ -99,12 +108,12 @@ struct AllExercises: View {
 
 struct AllExercises_Previews: PreviewProvider {
     static var previews: some View {
-        // Create an instance of ExercisesViewModel for previews
         let exercisesViewModel = ExercisesViewModel()
+        let dummyDayID = CKRecord.ID(recordName: UUID().uuidString)  // Dummy CKRecord.ID for previews
         
-        AllExercises()
-            // Provide the viewModel instance to the AllExercises view
+        AllExercises(dayID: dummyDayID)
             .environmentObject(exercisesViewModel)
     }
 }
+
 

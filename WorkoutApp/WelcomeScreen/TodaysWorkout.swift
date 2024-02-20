@@ -11,7 +11,7 @@ struct TodaysWorkout: View {
 
     var body: some View {
         NavigationLink(destination: ContentView()
-                                       .environmentObject(WeekData.shared)
+                                      
                                        .environmentObject(WorkoutData())) {
             RoundedRectangle(cornerRadius: 10)
                 .fill(Color(red: 41/255, green: 41/255, blue: 41/255))
@@ -54,7 +54,6 @@ struct TodaysWorkout_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             TodaysWorkout()
-                .environmentObject(WeekData.shared)
                 .environmentObject(WorkoutData())
                 .environment(\.colorScheme, .light) // Preview in dark mode
         }

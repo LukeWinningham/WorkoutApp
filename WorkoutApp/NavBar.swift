@@ -9,38 +9,43 @@ import Combine
 
 struct NavBar: View {
     @EnvironmentObject var navigationState: NavigationState
+    @EnvironmentObject var authViewModel: AuthViewModel
+
     var body: some View {
         NavigationView {
             TabView(selection: $navigationState.selectedTab) {
                 
-                Discovery()
-                    .tabItem {
-                        Image(systemName: "magnifyingglass")
-                        Text("Doscover")
-                    }
-                    .tag(3)
-            
-
-                Text("Coming Soon...")
-                    .tabItem {
-                        Image(systemName: "chart.line.uptrend.xyaxis")
-                        Text("Progress")
-                    }
-                    .tag(2)
-
-                AddView()
-                    .tabItem {
-                        Image(systemName: "calendar.badge.plus")
-                        Text("Plan")
-                    }
-                    .tag(1)
-             
                 Welcome() // This line adds the Welcome view back as the first tab's content
                     .tabItem {
                         Image(systemName: "dumbbell")
                         Text("Today")
                     }
                     .tag(0)
+            
+                
+                AddView().environmentObject(authViewModel)
+                    .tabItem {
+                        Image(systemName: "calendar.badge.plus")
+                        Text("Plan")
+                    }
+                    .tag(1)
+                
+                Discovery()
+                    .tabItem {
+                        Image(systemName: "magnifyingglass")
+                        Text("Doscover")
+                    }
+                    .tag(2)
+
+                
+             
+               
+                Text("Coming Soon...")
+                    .tabItem {
+                        Image(systemName: "chart.line.uptrend.xyaxis")
+                        Text("Progress")
+                    }
+                    .tag(3)
             }
             .navigationBarTitle("", displayMode: .inline)
             .foregroundColor(Color(red: 0/255, green: 211/255, blue: 255/255))
@@ -55,13 +60,12 @@ struct NavBar: View {
 struct NavBar_Previews: PreviewProvider {
     static var previews: some View {
         let navigationState = NavigationState()
-        let weekData = WeekData.shared // Assuming this is how you initialize WeekData
+      
         let workoutData = WorkoutData() // Assuming this is how you initialize WorkoutData
-
+        let authViewModel = AuthViewModel()
         NavBar()
             .environmentObject(navigationState)
-            .environmentObject(weekData)
             .environmentObject(workoutData)
-        
+            .environmentObject(authViewModel)
     }
 }
