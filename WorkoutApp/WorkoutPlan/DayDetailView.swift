@@ -44,6 +44,7 @@ struct DayDetailView: View {
         ZStack {
             Color(red: 18/255, green: 18/255, blue: 18/255).edgesIgnoringSafeArea(.all)
                 .navigationBarBackButtonHidden(true)
+
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button(action: {

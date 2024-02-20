@@ -8,7 +8,7 @@
 import SwiftUI
 import CloudKit
 
-struct ExerciseSet: Identifiable, Equatable {
+struct ExerciseSet: Identifiable, Equatable, Codable {
     let id: UUID = UUID()
     var reps: Int
     var timeInMinutes: Int? // Optional time for cardio exercises
@@ -138,29 +138,27 @@ struct AddExercise: View {
     }
 
     private func saveExerciseToCloudKit() {
-        for exerciseSet in exerciseSets {
-            let record = CKRecord(recordType: "PackExercises")
-            record["ChosenExercise"] = exerciseName
-            record["DayID"] = CKRecord.Reference(recordID: dayID, action: .none)
-            record["Reps"] = exerciseSet.reps
-            if let time = exerciseSet.timeInMinutes {
-                record["Time"] = time
-            } else {
-                // Assume 'Sets' is the number of items in 'exerciseSets'
-                record["Sets"] = exerciseSets.count
-            }
-            
-            database.save(record) { _, error in
-                DispatchQueue.main.async {
-                    if let error = error {
-                        print("Error saving exercise to CloudKit: \(error.localizedDescription)")
-                    } else {
-                        print("Successfully saved exercise to CloudKit")
-                    }
+        let record = CKRecord(recordType: "PackExercises")
+        record["ChosenExercise"] = exerciseName
+        record["DayID"] = CKRecord.Reference(recordID: dayID, action: .none)
+        
+        // Convert exerciseSets to JSON
+        if let jsonData = try? JSONEncoder().encode(exerciseSets),
+           let jsonString = String(data: jsonData, encoding: .utf8) {
+            record["Reps"] = jsonString
+        }
+        record["Sets"] = exerciseSets.count
+
+        database.save(record) { _, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    print("Error saving exercise to CloudKit: \(error.localizedDescription)")
+                } else {
+                    print("Successfully saved exercise to CloudKit")
+                    self.presentationMode.wrappedValue.dismiss()
                 }
             }
         }
-        self.presentationMode.wrappedValue.dismiss()
     }
 }
 
