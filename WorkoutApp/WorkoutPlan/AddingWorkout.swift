@@ -10,7 +10,7 @@ import SwiftUI
 import CloudKit
 
 class DayManager: ObservableObject {
-    @Published var days: [(id: UUID, name: String)] = []
+    @Published var days: [(id: UUID, name: String, order: Int)] = []
 
     func fetchDays(currentPackID: UUID?, completion: @escaping () -> Void = {}) {
         guard let currentPackID = currentPackID else { return }
@@ -19,19 +19,21 @@ class DayManager: ObservableObject {
         let query = CKQuery(recordType: "PackDay", predicate: predicate)
 
         database.perform(query, inZoneWith: nil) { [weak self] records, error in
-            DispatchQueue.main.async {
-                if let records = records {
-                    self?.days = records.compactMap { record in
-                        if let dayName = record["DayName"] as? String, let dayID = record["DayID"] as? String {
-                            return (UUID(uuidString: dayID)!, dayName)
-                        }
-                        return nil
-                    }
-                    completion() // Call the completion handler
-                }
-            }
-        }
-    }
+               DispatchQueue.main.async {
+                   if let records = records {
+                       self?.days = records.compactMap { record in
+                           guard let dayName = record["DayName"] as? String,
+                                 let dayID = record["DayID"] as? String,
+                                 let order = record["Order"] as? Int,
+                                 let uuid = UUID(uuidString: dayID) else { return nil }
+
+                           return (id: uuid, name: dayName, order: order)
+                       }
+                       completion()
+                   }
+               }
+           }
+       }
 
     func triggerUpdate() {
         DispatchQueue.main.async {
@@ -50,26 +52,38 @@ struct AddView: View {
 
     var body: some View {
         NavigationView {
-            ZStack(alignment: .top) {
+            ZStack {
                 Color(red: 18/255, green: 18/255, blue: 18/255).edgesIgnoringSafeArea(.all)
                     .onTapGesture {
                         // Dismiss the keyboard and hide the text field container
                         hideTextFieldContainer()
                     }
+                
                 VStack {
                     headerView
                     daysListView
-                    if isTextFieldContainerVisible {
-                        textFieldContainerView     
-
-                    }
+                    Spacer() // This will push everything to the top
                 }
                 .onAppear(perform: fetchCurrentPackID)
+                
+                // Positioned at the bottom right
+                if isTextFieldContainerVisible {
+                    textFieldContainerView
+                } else {
+                    // Position the plus button at the bottom right
+                                  VStack {
+                                      Spacer() // Pushes the button to the bottom
+                                      HStack {
+                                          Spacer() // Pushes the button to the right
+                                          plusButton
+                                              .padding(20) // Adds space around the button from the edges of the screen
+                                      }
+                                  }
+                              }
             }
             .sheet(isPresented: $showingWorkoutPacks) {
                 WorkoutPacks()
             }
-                
         }
     }
     private func hideTextFieldContainer() {
@@ -77,25 +91,28 @@ struct AddView: View {
         // Hide the keyboard
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
+
     var headerView: some View {
         HStack {
             workoutPackButton
-            Spacer()
-            Text("Add A Day").font(.title).foregroundColor(Color.white)
-            Spacer()
-            Button(action: { isTextFieldContainerVisible.toggle() }) {
-                Image(systemName: "plus.circle.fill")
-                    .resizable()
-                    .frame(width: 20, height: 20)
-                    .foregroundColor(Color(red: 0/255, green: 211/255, blue: 255/255))
-                    .padding()
-            }
+                .hidden() // This makes the button invisible but still takes up space
+            Spacer() // This spacer will push the text to the center
+
+            Text("Add A Day")
+                .font(.title)
+                .foregroundColor(Color.white)
+
+            Spacer() // Another spacer after the text to ensure it stays centered
+
+            // An invisible button (or spacer) to balance the left button
+            workoutPackButton
+               
         }
         .padding()
-          .background(Color(red: 18/255, green: 18/255, blue: 18/255))
-          .cornerRadius(10)
-          .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
-      }
+        .background(Color(red: 18/255, green: 18/255, blue: 18/255))
+        .cornerRadius(10)
+        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
+    }
 
     var textFieldContainerView: some View {
         HStack {
@@ -122,6 +139,7 @@ struct AddView: View {
         .padding()
         .padding(.bottom, 420)
     }
+    
 
     var daysListView: some View {
         ScrollView {
@@ -165,7 +183,7 @@ struct AddView: View {
         }) {
             Image(systemName: "figure.run.square.stack")
                 .resizable()
-                .frame(width: 20, height: 20)
+                .frame(width: 30, height: 30)
                 .foregroundColor(Color.red)
                 .padding()
         }
@@ -195,29 +213,64 @@ struct AddView: View {
         }
 
         let database = CKContainer.default().publicCloudDatabase
-        let newDayRecord = CKRecord(recordType: "PackDay")
-        newDayRecord["DayName"] = name
-        newDayRecord["PackID"] = CKRecord.Reference(recordID: CKRecord.ID(recordName: currentPackID.uuidString), action: .none)
+        // Fetch existing days to determine the next order number
+        let predicate = NSPredicate(format: "PackID == %@", CKRecord.ID(recordName: currentPackID.uuidString))
+        let query = CKQuery(recordType: "PackDay", predicate: predicate)
 
-        // Generate a new UUID for DayID and store its string representation in the record
-        let dayID = UUID()
-        newDayRecord["DayID"] = dayID.uuidString
-
-        database.save(newDayRecord) { [self] record, error in
+        database.perform(query, inZoneWith: nil) { records, error in
             DispatchQueue.main.async {
                 if let error = error {
-                    print("Error saving new day: \(error.localizedDescription)")
+                    print("Error fetching days: \(error.localizedDescription)")
                 } else {
-                    self.newItemName = ""
-                    self.isTextFieldContainerVisible = false
-                    self.dayManager.fetchDays(currentPackID: self.currentPackID) {
-                        self.dayManager.triggerUpdate() // Force update
+                    let existingOrderNumbers = records?.compactMap { $0["Order"] as? Int } ?? []
+                    let nextOrderNumber = (existingOrderNumbers.max() ?? 0) + 1
+
+                    // Now create and save the new day with the next order number
+                    let newDayRecord = CKRecord(recordType: "PackDay")
+                    newDayRecord["DayName"] = name
+                    newDayRecord["PackID"] = CKRecord.Reference(recordID: CKRecord.ID(recordName: currentPackID.uuidString), action: .none)
+
+                    // Generate a new UUID for DayID and store its string representation in the record
+                    let dayID = UUID()
+                    newDayRecord["DayID"] = dayID.uuidString
+
+                    // Set the order number for the new day
+                    newDayRecord["Order"] = nextOrderNumber
+
+                    database.save(newDayRecord) { record, error in
+                        DispatchQueue.main.async {
+                            if let error = error {
+                                print("Error saving new day: \(error.localizedDescription)")
+                            } else {
+                                self.newItemName = ""
+                                self.isTextFieldContainerVisible = false
+                                // Fetch days again to include the new day in the list
+                                self.dayManager.fetchDays(currentPackID: self.currentPackID) {
+                                    // Force an update in the UI
+                                    self.dayManager.triggerUpdate()
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
     }
-}
+
+
+    var plusButton: some View {
+            Button(action: { isTextFieldContainerVisible.toggle() }) {
+                Image(systemName: "plus.circle.fill")
+                    .resizable()
+                    .frame(width: 60, height: 60) // Adjust size as needed
+                    .foregroundColor(Color(red: 0/255, green: 211/255, blue: 255/255))
+                    .background(Color.black.opacity(0.5)) // Optional: add a slight background to improve contrast
+                    .clipShape(Circle())
+                    .shadow(radius: 10) // Optional: add a shadow for a more distinct appearance
+            }
+        }
+    }
+
 
 struct AddView_Previews: PreviewProvider {
     static var previews: some View {

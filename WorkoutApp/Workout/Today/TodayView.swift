@@ -38,10 +38,11 @@ struct TodayView: View {
             Button(action: {
                 self.presentationMode.wrappedValue.dismiss()
             }) {
-                Image(systemName: "chevron.backward.circle.fill")
-                    .imageScale(.medium)
+                Image(systemName: "chevron.backward")
+                    .imageScale(.small)
                     .font(.title)
-                    .foregroundColor(Color(hue: 0.014, saturation: 0.483, brightness: 0.901))
+                    .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
+                    .shadow(radius: 3)
             }
             .padding(.leading, 15.0)
             

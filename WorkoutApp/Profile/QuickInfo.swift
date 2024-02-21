@@ -20,11 +20,11 @@ struct QuickInfo: View {
                     
                     
                     VStack {
-                        Text("5'9")
+                        Text("59")
                             .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
                             .font(.title2)
                             .bold()
-                        Text("Height")
+                        Text("Following")
                             .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
                             .font(.headline)
                     }
@@ -41,11 +41,11 @@ struct QuickInfo: View {
                     
                     
                     VStack {
-                        Text("180 lbs")
+                        Text("180")
                             .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
                             .font(.title2)
                             .bold()
-                        Text("Weight")
+                        Text("Followers")
                             .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
                             .font(.headline)
                     }
@@ -62,11 +62,11 @@ struct QuickInfo: View {
                     
                     
                     VStack {
-                        Text("20")
+                        Text("45")
                             .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
                             .font(.title2)
                             .bold()
-                        Text("Age")
+                        Text("Friends")
                             .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
                             .font(.headline)
                     }

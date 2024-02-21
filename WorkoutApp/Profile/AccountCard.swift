@@ -10,79 +10,86 @@ import Combine
 struct AccountCard: View {
     var body: some View {
         RoundedRectangle(cornerRadius: 10)
-            .fill(Color(red: 41/255, green: 41/255, blue: 41/255)) // Use any color that fits your design
-            .frame(height: 170) // Adjust size as needed
-            .shadow(radius: 5) // Adjust shadow radius as needed
+            .fill(Color(red: 41/255, green: 41/255, blue: 41/255))
+            .frame(height: 200)
+            .shadow(radius: 5)
             .overlay(
-                VStack(alignment: .leading, spacing: 20.0) { // Reduced spacing to accommodate elements better
+                VStack(alignment: .leading, spacing: 15) {
                     Text("Account")
-                        .font(.title2)
+                        .font(.title)
                         .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
                         .bold()
-                        .padding(.top, 20) // Reduced padding to align with the overall layout
-                        .padding(.leading, 10) // Apply 10 points of padding to the leading edge
+                        .padding(.leading, 4)
+                        .padding(.top, 15)
+                    
                     HStack {
-                        VStack(alignment: .leading, spacing: 10) { // Added alignment and spacing
-                            HStack {
-                                Image(systemName: "person.2")
-                                    .font(.title2)
-                                    .foregroundColor(Color(red: 0/255, green: 117/255, blue: 255/255))
-                                Text("Friends")
-                                    .font(.title2)
-                                    
-                                    .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
-                            }
-                            .padding(.leading, 15) // Added padding to move "Friends" to the right
+                        Image(systemName: "doc.plaintext")
+                            .foregroundColor(Color.white)
+                            .font(.title2)
+                            .frame(width: 30)
+                        
+                        Text("Data")
+                            .font(.title2)
+                          
+                            .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
+                            .frame(minWidth: 70, alignment: .leading)
+                          
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.forward")
+                            .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
+                            .frame(width: 30, height: 30)
+                            .imageScale(.large)
+                            .padding(.trailing, 10)
+                    }
+                    
+                    HStack {
+                        Image(systemName: "trophy")
+                            .foregroundColor(Color.yellow)
+                            .frame(width: 30)
+                        
+                        Text("Achievements")
+                            .font(.title2)
                             
-                            HStack {
-                                Image(systemName: "doc.plaintext")
-                                    .foregroundColor(Color.white)
-                                    .font(.title2)
-                                    
-                                VStack(alignment: .center) { // Align text to leading
-                                    Text("Personal")
-                                        .font(.title2)
-                                        .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
-                                    Text("Data")
-                                        .font(.title2)
-                                        .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
-                                }
-                            }
-                            .padding(.leading, 20) // Added padding to move "Personal Data" to the right
-                        }
-                        Spacer() // This will push the second VStack to the end of the HStack
-                        VStack(alignment: .leading, spacing: 10) { // Matched alignment and spacing with the first VStack
-                            HStack {
-                                Image(systemName: "trophy")
-                                    .foregroundColor(Color.yellow)
-                                    .font(.title3)
-                                    
-                                Text("Achievements")
-                                    .font(.title2)
-                                    .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
-                            }
-                            HStack {
-                                Image(systemName: "figure.run.square.stack")
-                                    .foregroundColor(Color.red)
-                                    .font(.title2)
-                                    
-                                VStack() { // Align text to leading
-                                    Text("Workout")
-                                        .font(.title2)
-                                        .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
-                                        .multilineTextAlignment(.center)
-                                    Text("Packs")
-                                        .font(.title2)
-                                        .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
-                                }
-                            }
-                        }
-                        .padding([.leading, .trailing], 15) // Adjusted padding to match the first VStack
+                            .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
+                            .frame(minWidth: 70, alignment: .leading)
+                            
+                        Spacer()
+                        
+                        Image(systemName: "chevron.forward")
+                            .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
+                            .frame(width: 30, height: 30)
+                            .imageScale(.large)
+                            .padding(.trailing, 10)
+                    }
+                    
+                    HStack {
+                        Image(systemName: "chart.line.uptrend.xyaxis")
+                            .foregroundColor(Color.green)
+                            .font(.title2)
+                            .frame(width: 30)
+                        
+                        Text("Progress")
+                            .font(.title2)
+                           
+                            .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
+                            .frame(minWidth: 70, alignment: .leading)
+                            
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.forward")
+                            .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
+                            .frame(width: 30, height: 30)
+                            .imageScale(.large)
+                            .padding(.trailing, 10)
                     }
                 }
-                .padding(.bottom, 20) // Adjusted padding to match the overall layout
+                    .padding([.leading, .bottom, .trailing], 15)
             )
-            .padding(.horizontal, 15) // Padding applied to the RoundedRectangle
+            .padding(.horizontal, 15)
+
     }
 }
 

@@ -47,14 +47,8 @@ struct TopProfile: View {
                                 .padding(.trailing)
                             Text("Currently Cutting")
                                 .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
-                                .font(.subheadline)
-                            Spacer()
-                            HStack{
-                                Image(systemName: "flame.fill")
-                                    .foregroundColor(Color.orange) // Use your own image or system image name
-                                Text("32")
-                                    .foregroundColor(Color.orange)
-                            }
+                                .font(.headline)
+                   
                         }
                         
                         Spacer()

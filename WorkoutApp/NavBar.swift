@@ -17,45 +17,49 @@ struct NavBar: View {
                 
                 Welcome() // This line adds the Welcome view back as the first tab's content
                     .tabItem {
-                        Image(systemName: "dumbbell")
+                        Image(navigationState.selectedTab == 0 ? "dd" : "dumbbell")
                         Text("Today")
                     }
                     .tag(0)
             
+                Discovery()
+                    .tabItem {
+                        Image(systemName: navigationState.selectedTab == 2 ? "sparkle.magnifyingglass" : "magnifyingglass")
+                        Text("Discover")
+                    }
+                    .tag(2)
                 
                 AddView().environmentObject(authViewModel)
                     .tabItem {
-                        Image(systemName: "calendar.badge.plus")
+                        Image(navigationState.selectedTab == 1 ? "list" : "list.bullet.circle")
                         Text("Plan")
                     }
                     .tag(1)
-                
-                Discovery()
-                    .tabItem {
-                        Image(systemName: "magnifyingglass")
-                        Text("Doscover")
-                    }
-                    .tag(2)
-
-                
-             
-               
-                Text("Coming Soon...")
-                    .tabItem {
-                        Image(systemName: "chart.line.uptrend.xyaxis")
-                        Text("Progress")
-                    }
-                    .tag(3)
             }
             .navigationBarTitle("", displayMode: .inline)
-            .foregroundColor(Color(red: 0/255, green: 211/255, blue: 255/255))
         }
         .onAppear {
-            UITabBar.appearance().unselectedItemTintColor = UIColor(Color(red: 199/255, green: 199/255, blue: 199/255))
-            UITabBar.appearance().backgroundColor = UIColor(Color(red: 20/255, green: 20/255, blue: 20/255))
+            let tabBarAppearance = UITabBarAppearance()
+            tabBarAppearance.backgroundColor = UIColor(Color(red: 20/255, green: 20/255, blue: 20/255))
+            let titleAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12)] // Adjust this value as needed
+                     tabBarAppearance.stackedLayoutAppearance.normal.titleTextAttributes = titleAttributes
+                     tabBarAppearance.stackedLayoutAppearance.selected.titleTextAttributes = titleAttributes
+
+            // Set both selected and unselected item color to the same value
+            let itemTintColor = UIColor(Color(red: 199/255, green: 199/255, blue: 199/255))
+            tabBarAppearance.stackedLayoutAppearance.normal.iconColor = itemTintColor
+            tabBarAppearance.stackedLayoutAppearance.selected.iconColor = itemTintColor
+            tabBarAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: itemTintColor]
+            tabBarAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: itemTintColor]
+
+            UITabBar.appearance().standardAppearance = tabBarAppearance
+            if #available(iOS 15.0, *) {
+                UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
+            }
         }
     }
 }
+
 
 struct NavBar_Previews: PreviewProvider {
     static var previews: some View {

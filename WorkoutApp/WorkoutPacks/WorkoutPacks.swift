@@ -46,70 +46,87 @@ struct WorkoutPacks: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @State private var packs = [PackData]()
     @State private var showingAddPackView = false
-    @State private var showingEditPackView = false
 
     let packWidth: CGFloat = 400
     let packHeight: CGFloat = 700
     let spacing: CGFloat = 16
 
     var body: some View {
-        NavigationView {
-            ZStack(alignment: .topTrailing) {
-                Color(red: 18/255, green: 18/255, blue: 18/255).edgesIgnoringSafeArea(.all)
-                VStack {
-                    headerView
-                    Spacer()
-                    
-                    packsCarousel
-                    Spacer()
-                }
-            }
-        }
-        .onAppear {
-            fetchPacks()
-        }
-        .sheet(isPresented: $showingAddPackView) {
-            AddPackView(isPresented: $showingAddPackView, onSave: { packName, selectedImage in
-                addPack(name: packName, image: selectedImage)
-            })
-        }
-    }
+         NavigationView {
+             ZStack(alignment: .top) {
+                 Color(red: 18/255, green: 18/255, blue: 18/255).edgesIgnoringSafeArea(.all)
 
+                 VStack {
+                     headerView
+                     Spacer()
+                     packsCarousel
+                 }
+
+                 // Add button positioned at the bottom right
+                 VStack {
+                     Spacer() // Pushes everything above to the top
+                     HStack {
+                         Spacer() // Pushes the button to the right
+                         addButton
+                             .padding(20) // Adds space around the button from the edges of the screen
+                     }
+                 }
+             }
+             .onAppear {
+                 fetchPacks()
+             }
+             .sheet(isPresented: $showingAddPackView) {
+                 AddPackView(isPresented: $showingAddPackView, onSave: { packName, selectedImage in
+                     addPack(name: packName, image: selectedImage)
+                 })
+             }
+         }
+     }
+
+     var addButton: some View {
+         Button(action: {
+             showingAddPackView = true
+         }) {
+             Image(systemName: "plus.circle.fill")
+                 .resizable()
+                 .frame(width: 60, height: 60) // Adjust the size as needed
+                 .foregroundColor(Color(red: 0/255, green: 211/255, blue: 255/255))
+                 .background(Color.black.opacity(0.5)) // Optional: adds a slight background to improve contrast
+                 .clipShape(Circle())
+                 .shadow(radius: 10) // Optional: adds a shadow for a more distinct appearance
+         }
+     }
     var headerView: some View {
-        ZStack {
+        HStack {
+            // Left-aligned chevron icon
+            Image(systemName: "chevron.down")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 20, height: 20)
+                .foregroundColor(Color.white)
+
+            Spacer() // Pushes the chevron to the left and title to the center
+
+            // Centered title
             Text("Workout Packs")
                 .font(.title)
                 .foregroundColor(Color.white)
-                .padding()
 
-            HStack {
-                Image(systemName: "chevron.down")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 20, height: 20) // Adjust the size as needed
-                    .foregroundColor(Color.white)
-                    .padding()
-                Spacer() // This pushes the chevron to the left
-            }
+            Spacer() // Maintains the center alignment of the title
 
-            HStack {
-                Spacer() // This pushes the button to the right
-                Button(action: {
-                    showingAddPackView = true
-                }) {
-                    Image(systemName: "plus.circle.fill")
-                        .resizable()
-                        .frame(width: 20, height: 20) // Adjust the size as needed
-                        .foregroundColor(Color(red: 0/255, green: 211/255, blue: 255/255))
-                        .padding()
-                }
-            }
+            // Invisible spacer to balance the chevron icon and maintain the title's center alignment
+            Image(systemName: "chevron.down")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 20, height: 20)
+                .foregroundColor(Color.clear) // Make this icon invisible
         }
         .padding()
-          .background(Color(red: 18/255, green: 18/255, blue: 18/255))
-          .cornerRadius(10)
-          .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
-      }
+        .background(Color(red: 18/255, green: 18/255, blue: 18/255))
+        .cornerRadius(10)
+        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
+    }
+
 
 
     var packsCarousel: some View {
@@ -143,17 +160,13 @@ struct WorkoutPacks: View {
                 HStack{
                     Spacer()
                     Button(action: {
-                               self.showingEditPackView = true
-                           }) {
-                               Image(systemName: "pencil")
-                               // Styling for the button
-                           }
-                           .sheet(isPresented: $showingEditPackView) {
-                               EditPackView(isPresented: self.$showingEditPackView, packData: packData) { id, name, image in
-                                   // Handle save action: update the pack in CloudKit and refresh the packs list
-                               }
-                           }
-                    
+                    }) {
+                        Image(systemName: "pencil")
+                        // Styling for the button
+                    }
+
+
+
                 }
                 
             }
@@ -428,97 +441,8 @@ Spacer()
         }
     }
 }
-struct EditPackView: View {
-    @Binding var isPresented: Bool
-    var packData: PackData
-    @State private var packName: String
-    @State private var selectedImage: UIImage?
-    @State private var showingImagePicker = false
 
-    var onSave: (UUID, String, UIImage?) -> Void
 
-    init(isPresented: Binding<Bool>, packData: PackData, onSave: @escaping (UUID, String, UIImage?) -> Void) {
-        self._isPresented = isPresented
-        self.packData = packData
-        self._packName = State(initialValue: packData.packInfo)
-        self._selectedImage = State(initialValue: packData.image)
-        self.onSave = onSave
-    }
-
-    var body: some View {
-        VStack {
-            ZStack {
-                Text("Edit Pack")
-                    .font(.title)
-                    .foregroundColor(Color.white)
-                    .padding()
-
-                HStack {
-                    Image(systemName: "chevron.down")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 20, height: 20) // Adjust the size as needed
-                        .foregroundColor(Color.white)
-                        .padding()
-                    Spacer() // This pushes the chevron to the left
-                }
-
-                HStack {
-                    Spacer() // This pushes the button to the right
-                    Button("Save") {
-                        onSave(packData.id, packName, selectedImage)
-                        isPresented = false
-                    }
-                    .foregroundColor(Color.white)
-                    .padding()
-                    .background(Color.clear)
-                    .cornerRadius(10)
-                    }
-
-                }
-            }
-Spacer()
-           
-
-            TextField("Enter Pack Name", text: $packName)
-                .padding()
-                .background(Color(red: 41/255, green: 41/255, blue: 41/255))
-                .cornerRadius(10)
-                .padding(.horizontal)
-                .foregroundColor(Color.white)
-
-            ZStack {
-                if let selectedImage = selectedImage {
-                    Image(uiImage: selectedImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 350, height: 600)
-                        .cornerRadius(15)
-                        .clipped()
-                } else {
-                    Rectangle()
-                        .fill(Color.gray)
-                        .frame(width: 300, height: 300)
-                        .cornerRadius(15)
-                }
-
-                Text("Tap to change photo")
-                    .foregroundColor(selectedImage == nil ? Color.white : Color.clear)
-                    .padding()
-            }
-            .onTapGesture {
-                showingImagePicker = true
-            }
-
-            Spacer()
-
-      
-        .background(Color(red: 18/255, green: 18/255, blue: 18/255).edgesIgnoringSafeArea(.all))
-        .sheet(isPresented: $showingImagePicker) {
-            ImagePicker(selectedImage: self.$selectedImage)
-        }
-    }
-}
 
 struct WorkoutPacks_Previews: PreviewProvider {
     static var previews: some View {
@@ -526,7 +450,7 @@ struct WorkoutPacks_Previews: PreviewProvider {
     }
 }
 
-struct PackData {
+struct PackData: Identifiable, Equatable {
     var id: UUID
     var packInfo: String
     var image: UIImage?
