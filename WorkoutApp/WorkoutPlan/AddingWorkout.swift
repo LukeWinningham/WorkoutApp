@@ -91,7 +91,11 @@ struct AddView: View {
                     .padding()
             }
         }
-    }
+        .padding()
+          .background(Color(red: 18/255, green: 18/255, blue: 18/255))
+          .cornerRadius(10)
+          .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
+      }
 
     var textFieldContainerView: some View {
         HStack {

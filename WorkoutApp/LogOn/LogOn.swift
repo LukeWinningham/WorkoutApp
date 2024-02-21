@@ -10,45 +10,56 @@ import Combine
 import CloudKit
 
 class AuthViewModel: ObservableObject {
-    @Published var isUserAuthenticated = UserDefaults.standard.bool(forKey: "isUserSignedIn") {
-        didSet {
-            UserDefaults.standard.set(isUserAuthenticated, forKey: "isUserSignedIn")
-            if !isUserAuthenticated {
-                isProfileCompleted = false
-                UserDefaults.standard.removeObject(forKey: "userIdentifier") // Remove userIdentifier when not authenticated
-            }
-        }
-    }
-    @Published var isProfileCompleted = UserDefaults.standard.bool(forKey: "isProfileCompleted") {
-        didSet {
-            UserDefaults.standard.set(isProfileCompleted, forKey: "isProfileCompleted")
-        }
-    }
+    @Published var selectedPackID: UUID?
+    @Published var isUserAuthenticated = UserDefaults.standard.bool(forKey: "isUserSignedIn")
+    @Published var isProfileCompleted = UserDefaults.standard.bool(forKey: "isProfileCompleted")
+    @Published var username: String? // Holds the fetched username
+
     var userIdentifier: String?
 
+    private let container = CKContainer.default()
+    private var database: CKDatabase { container.publicCloudDatabase }
+
     init() {
-        self.userIdentifier = UserDefaults.standard.string(forKey: "userIdentifier") // Retrieve userIdentifier on init
+        self.userIdentifier = UserDefaults.standard.string(forKey: "userIdentifier")
         if isUserAuthenticated {
+            fetchUsername()
             checkProfileCompletion()
         }
     }
 
     func signIn(userIdentifier: String) {
-        UserDefaults.standard.set(userIdentifier, forKey: "userIdentifier") // Save userIdentifier on sign in
+        UserDefaults.standard.set(userIdentifier, forKey: "userIdentifier")
         self.isUserAuthenticated = true
         self.userIdentifier = userIdentifier
+        fetchUsername()
         checkProfileCompletion()
     }
 
     func signOut() {
         self.isUserAuthenticated = false
         self.userIdentifier = nil
-        UserDefaults.standard.removeObject(forKey: "userIdentifier") // Clear userIdentifier on sign out
+        UserDefaults.standard.removeObject(forKey: "userIdentifier")
     }
 
     func completeProfile() {
         self.isProfileCompleted = true
     }
+
+    func fetchUsername() {
+        guard let userIdentifier = self.userIdentifier else { return }
+
+        let predicate = NSPredicate(format: "userIdentifier == %@", userIdentifier)
+        let query = CKQuery(recordType: "PersonalData", predicate: predicate) // Adjust "User" to your actual record type
+
+        database.perform(query, inZoneWith: nil) { [weak self] records, error in
+            DispatchQueue.main.async {
+                guard let record = records?.first else { return }
+                self?.username = record["username"] as? String // Adjust "username" to your actual field name
+            }
+        }
+    }
+
     func checkProfileCompletion() {
         guard let userIdentifier = self.userIdentifier, isUserAuthenticated else { return }
 

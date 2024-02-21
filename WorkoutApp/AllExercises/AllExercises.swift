@@ -6,30 +6,24 @@
 //
 
 
-
-
 import SwiftUI
 import Combine
 import CloudKit
 
-
-
-
 struct AllExercises: View {
     @Environment(\.presentationMode) var presentationMode
-    var dayID: CKRecord.ID  // Add this to accept dayID
+    var dayID: CKRecord.ID  // To accept dayID
 
     @State private var searchText = ""
     @State private var selectedFilter: String? = nil
     @EnvironmentObject var viewModel: ExercisesViewModel
+    @State private var hasScrolled = false  // State to track if user has scrolled
 
-    // Define a structure to hold both exercise name and its category
     struct ExerciseDisplay {
         let name: String
         let category: String
     }
-    
-    // Create a flat list of exercises that match the search criteria
+
     private var filteredExercises: [ExerciseDisplay] {
         viewModel.exercises.flatMap { exerciseCategory in
             exerciseCategory.exercises.filter { exercise in
@@ -41,7 +35,7 @@ struct AllExercises: View {
             selectedFilter == nil || exerciseDisplay.category == selectedFilter
         }
     }
-    
+
     var body: some View {
         ZStack {
             Color(red: 18/255, green: 18/255, blue: 18/255)
@@ -60,60 +54,80 @@ struct AllExercises: View {
                         }
                     }
                 }
+
             VStack {
-                Text("Choose An Exercise")
-                    .font(.title)
-                    .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
-                    .padding()
-                HStack{
-                    TextField("Search exercises...", text: $searchText)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .padding()
-                    
-                    Picker("Filter", selection: $selectedFilter) {
-                        Text("All").tag(String?.none)
-                        ForEach(viewModel.exercises.map { $0.name }, id: \.self) { category in
-                            Text(category).tag(category as String?)
+                VStack {
+                    Text("Choose An Exercise")
+                        .font(.title)
+                        .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
+                        
+                    HStack {
+                        TextField("Search exercises...", text: $searchText)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .padding(.horizontal)
+
+                        Picker("Filter", selection: $selectedFilter) {
+                            Text("All").tag(String?.none)
+                            ForEach(viewModel.exercises.map { $0.name }, id: \.self) { category in
+                                Text(category).tag(category as String?)
+                            }
                         }
+                        .pickerStyle(MenuPickerStyle())
+                        .padding(.horizontal)
                     }
-                    .pickerStyle(MenuPickerStyle())
-                    .padding(.all)
                 }
+                .background(hasScrolled ? Color(red: 18/255, green: 18/255, blue: 18/255) : Color(red: 18/255, green: 18/255, blue: 18/255))
+             
+                .shadow(color: hasScrolled ? Color.black.opacity(0.2) : Color.clear, radius: hasScrolled ? 5 : 0, x: 0, y: hasScrolled ? 5 : 0)
+                .animation(.easeInOut, value: hasScrolled)
+
                 ScrollView {
+                    GeometryReader { geometry in
+                        Color.clear.preference(key: ViewOffsetKey.self, value: geometry.frame(in: .named("scrollView")).minY)
+                    }
+                    .frame(height: 0)
+
                     ForEach(filteredExercises, id: \.name) { exerciseDisplay in
                         NavigationLink(destination: AddExercise(exerciseName: exerciseDisplay.name, exerciseCategory: exerciseDisplay.category, dayID: dayID)) {
-                      VStack(alignment: .leading)
-                         {
-                             Text(exerciseDisplay.name)
-                           .font(.headline)
-                           .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
-                            Text(exerciseDisplay.category)
-                                 .font(.subheadline)
-                                 .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
-
-                               Divider()
-                             }
+                            VStack(alignment: .leading) {
+                                Text(exerciseDisplay.name)
+                                    .font(.headline)
+                                    .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
+                                Text(exerciseDisplay.category)
+                                    .font(.subheadline)
+                                    .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
+                                Divider()
+                            }
                         }
                         .padding()
                     }
                 }
-            }
-            .onAppear{
-                print("AllExercises view appearing")
-               viewModel.loadExercises() 
+                .coordinateSpace(name: "scrollView")
+                .onPreferenceChange(ViewOffsetKey.self) { value in
+                    hasScrolled = value < 0
+                }
+                .onAppear {
+                    viewModel.loadExercises()
+                }
             }
         }
+    }
+}
+
+struct ViewOffsetKey: PreferenceKey {
+    typealias Value = CGFloat
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value += nextValue()
     }
 }
 
 struct AllExercises_Previews: PreviewProvider {
     static var previews: some View {
         let exercisesViewModel = ExercisesViewModel()
-        let dummyDayID = CKRecord.ID(recordName: UUID().uuidString)  // Dummy CKRecord.ID for previews
-        
+        let dummyDayID = CKRecord.ID(recordName: UUID().uuidString)
+
         AllExercises(dayID: dummyDayID)
             .environmentObject(exercisesViewModel)
     }
 }
-
-

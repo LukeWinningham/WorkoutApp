@@ -63,7 +63,10 @@ struct DayDetailView: View {
                     .font(.title)
                     .foregroundColor(Color.white)
                     .padding()
-
+                
+                    .frame(maxWidth: .infinity) // Ensure the header stretches across the screen
+                                  .background(Color(red: 18/255, green: 18/255, blue: 18/255)) // Background color of the header
+                                  .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 5)
                 ScrollView {
                     LazyVStack {
                         ForEach(viewModel.exercises, id: \.recordID) { exercise in
