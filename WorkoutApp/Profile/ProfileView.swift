@@ -10,7 +10,8 @@ import Combine
 
 struct ProfileView: View {
     @EnvironmentObject var workoutData: WorkoutData
-   
+    @EnvironmentObject var authViewModel: AuthViewModel // Access the AuthViewModel
+
     @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
@@ -45,12 +46,12 @@ struct ProfileView: View {
             .edgesIgnoringSafeArea(.top) // Allow the image and border to extend to the top edge of the screen
 
             VStack(spacing: 30.0) {
-                Spacer().frame(height: 90) // Adjust this height to move the content barely below the image
+                Spacer().frame(height: 70) // Adjust this height to move the content barely below the image
 
                 TopProfile()
                 QuickInfo()
                 AccountCard()
-                Other()
+               // Other()
             }
         }
     }
@@ -59,7 +60,7 @@ struct ProfileView: View {
 struct Profile_Previews: PreviewProvider {
     static var previews: some View {
         ProfileView()
-            
+            .environmentObject(AuthViewModel()) // Provide the AuthViewModel for the preview
     }
 }
 

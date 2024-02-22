@@ -73,7 +73,10 @@ struct WorkoutPacks: View {
                  }
              }
              .onAppear {
+                 
                  fetchPacks()
+                 fetchCurrentPackID() // Fetch the current pack ID when the view appears
+
              }
              .sheet(isPresented: $showingAddPackView) {
                  AddPackView(isPresented: $showingAddPackView, onSave: { packName, selectedImage in
@@ -147,7 +150,14 @@ struct WorkoutPacks: View {
             .frame(height: packHeight)
         }
     }
-
+    func fetchCurrentPackID() {
+        // Fetch the current pack ID from UserDefaults
+        if let currentPackID = UserDefaults.standard.string(forKey: "CurrentPack"), let uuid = UUID(uuidString: currentPackID) {
+            authViewModel.selectedPackID = uuid
+        } else {
+            // Handle the case where there is no current pack ID saved
+        }
+    }
     func workoutPackView(packData: PackData) -> some View {
         VStack(alignment: .center) {
             ZStack{
@@ -197,6 +207,7 @@ struct WorkoutPacks: View {
                         }
                     }
                 )
+            
         }
         .onTapGesture {
             // Handle pack selection here
@@ -227,6 +238,7 @@ struct WorkoutPacks: View {
                     print("PersonalData record not found for userIdentifier: \(userIdentifier)")
                     return
                 }
+                UserDefaults.standard.set(packID.uuidString, forKey: "CurrentPack")
 
                 // Update CurrentPack attribute in PersonalData
                 personalDataRecord["CurrentPack"] = CKRecord.Reference(recordID: CKRecord.ID(recordName: packID.uuidString), action: .none)

@@ -148,14 +148,20 @@ struct DayDetailView: View {
 
                 Spacer()
 
-                NavigationLink(destination: AllExercises(dayID: CKRecord.ID(recordName: dayID.uuidString))) {
-                    Image(systemName: "plus.circle.fill")
-                        .resizable()
-                        .frame(width: 50, height: 50)
-                        .foregroundColor(Color(red: 0/255, green: 211/255, blue: 255/255))
-                        .padding()
+                // Positioned at the bottom right
+                VStack {
+                    Spacer() // Pushes the button to the bottom
+                    HStack {
+                        Spacer() // Pushes the button to the right
+                        NavigationLink(destination: AllExercises(dayID: CKRecord.ID(recordName: dayID.uuidString))) {
+                            Image(systemName: "plus.circle.fill")
+                                .resizable()
+                                .frame(width: 60, height: 60) // Adjust size as needed
+                                .foregroundColor(Color(red: 0/255, green: 211/255, blue: 255/255))
+                                .padding()
+                        }
+                    }
                 }
-
             }
         }
         .onAppear {

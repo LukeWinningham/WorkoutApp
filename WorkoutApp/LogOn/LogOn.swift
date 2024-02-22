@@ -14,11 +14,12 @@ class AuthViewModel: ObservableObject {
     @Published var isUserAuthenticated = UserDefaults.standard.bool(forKey: "isUserSignedIn")
     @Published var isProfileCompleted = UserDefaults.standard.bool(forKey: "isProfileCompleted")
     @Published var username: String? // Holds the fetched username
+    @Published var profilePicture: UIImage?
 
     var userIdentifier: String?
 
     private let container = CKContainer.default()
-    private var database: CKDatabase { container.publicCloudDatabase }
+    var database: CKDatabase { container.publicCloudDatabase }
 
     init() {
         self.userIdentifier = UserDefaults.standard.string(forKey: "userIdentifier")
@@ -27,7 +28,27 @@ class AuthViewModel: ObservableObject {
             checkProfileCompletion()
         }
     }
+    func fetchProfilePicture() {
+        guard let userIdentifier = self.userIdentifier else { return }
 
+        let predicate = NSPredicate(format: "userIdentifier == %@", userIdentifier)
+        let query = CKQuery(recordType: "PersonalData", predicate: predicate)
+
+        database.perform(query, inZoneWith: nil) { [weak self] records, error in
+            guard let self = self, let record = records?.first, error == nil else {
+                print("Failed to fetch PersonalData record: \(String(describing: error))")
+                return
+            }
+
+            if let profilePictureAsset = record["ProfilePicture"] as? CKAsset, let fileURL = profilePictureAsset.fileURL {
+                if let imageData = try? Data(contentsOf: fileURL), let image = UIImage(data: imageData) {
+                    DispatchQueue.main.async {
+                        self.profilePicture = image
+                    }
+                }
+            }
+        }
+    }
     func signIn(userIdentifier: String) {
         UserDefaults.standard.set(userIdentifier, forKey: "userIdentifier")
         self.isUserAuthenticated = true

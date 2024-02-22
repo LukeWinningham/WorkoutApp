@@ -11,7 +11,7 @@ struct AccountCard: View {
     var body: some View {
         RoundedRectangle(cornerRadius: 10)
             .fill(Color(red: 41/255, green: 41/255, blue: 41/255))
-            .frame(height: 200)
+            .frame(height: 250)
             .shadow(radius: 5)
             .overlay(
                 VStack(alignment: .leading, spacing: 15) {
@@ -22,7 +22,7 @@ struct AccountCard: View {
                         .padding(.leading, 4)
                         .padding(.top, 15)
                     
-                    HStack {
+               /*     HStack {
                         Image(systemName: "doc.plaintext")
                             .foregroundColor(Color.white)
                             .font(.title2)
@@ -43,12 +43,13 @@ struct AccountCard: View {
                             .imageScale(.large)
                             .padding(.trailing, 10)
                     }
-                    
+                    */
                     HStack {
                         Image(systemName: "trophy")
                             .foregroundColor(Color.yellow)
                             .frame(width: 30)
-                        
+                            .font(.title2)
+
                         Text("Achievements")
                             .font(.title2)
                             
@@ -64,7 +65,7 @@ struct AccountCard: View {
                             .padding(.trailing, 10)
                     }
                     
-                    HStack {
+             /*      HStack {
                         Image(systemName: "chart.line.uptrend.xyaxis")
                             .foregroundColor(Color.green)
                             .font(.title2)
@@ -85,6 +86,70 @@ struct AccountCard: View {
                             .imageScale(.large)
                             .padding(.trailing, 10)
                     }
+              */
+                    HStack {
+                               Image(systemName: "envelope")
+                                   .foregroundColor(Color.white)
+                                   .font(.title2)
+                                   .frame(width: 30)
+                               
+                               Text("Contact Us")
+                                   .font(.title2)
+                                  
+                                   .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
+                                   .frame(minWidth: 70, alignment: .leading)
+                                   
+                               
+                               Spacer()
+                               
+                               Image(systemName: "chevron.forward")
+                                   .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
+                                   .frame(width: 30, height: 30)
+                                   .imageScale(.large)
+                                   .padding(.trailing, 10)
+                           }
+                    HStack {
+                               Image(systemName: "checkmark.seal")
+                                   .foregroundColor(Color.green)
+                                   .font(.title2)
+                                   .frame(width: 30)
+                               
+                               Text("Privacy Policy")
+                                   .font(.title2)
+                                  
+                                   .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
+                                   .frame(minWidth: 70, alignment: .leading)
+                                   
+                               
+                               Spacer()
+                               
+                               Image(systemName: "chevron.forward")
+                                   .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
+                                   .frame(width: 30, height: 30)
+                                   .imageScale(.large)
+                                   .padding(.trailing, 10)
+                           }
+                    HStack {
+                               Image(systemName: "gear")
+                                   .foregroundColor(Color.gray)
+                                   .font(.title2)
+                                   .frame(width: 30)
+                               
+                               Text("Settings")
+                                   .font(.title2)
+                                  
+                                   .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
+                                   .frame(minWidth: 70, alignment: .leading)
+                                   
+                               
+                               Spacer()
+                               
+                               Image(systemName: "chevron.forward")
+                                   .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
+                                   .frame(width: 30, height: 30)
+                                   .imageScale(.large)
+                                   .padding(.trailing, 10)
+                           }
                 }
                     .padding([.leading, .bottom, .trailing], 15)
             )

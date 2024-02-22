@@ -7,69 +7,127 @@
 
 import SwiftUI
 import Combine
+import CloudKit
+extension AuthViewModel {
+    func saveProfilePicture(image: UIImage) {
+        guard let userIdentifier = self.userIdentifier else { return }
+
+        // Convert image to CKAsset
+        guard let asset = image.toCKAsset() else { return }
+
+        // Fetch PersonalData record for the current user
+        let predicate = NSPredicate(format: "userIdentifier == %@", userIdentifier)
+        let query = CKQuery(recordType: "PersonalData", predicate: predicate)
+
+        database.perform(query, inZoneWith: nil) { [weak self] records, error in
+            guard let self = self, let record = records?.first else { return }
+
+            // Update the ProfilePicture field with the new CKAsset
+            record["ProfilePicture"] = asset
+
+            // Save the updated record
+            self.database.save(record) { updatedRecord, error in
+                if let error = error {
+                    print("Error saving profile picture: \(error)")
+                    return
+                }
+                print("Profile picture updated successfully")
+            }
+        }
+    }
+}
+
+extension UIImage {
+    func toCKAsset() -> CKAsset? {
+        guard let data = self.jpegData(compressionQuality: 0.8) else { return nil }
+        let tempDir = NSTemporaryDirectory()
+        let tempURL = URL(fileURLWithPath: tempDir).appendingPathComponent(UUID().uuidString).appendingPathExtension("jpg")
+        
+        do {
+            try data.write(to: tempURL)
+            return CKAsset(fileURL: tempURL)
+        } catch {
+            print("Failed to write image data to temp file: \(error)")
+            return nil
+        }
+    }
+}
 
 struct TopProfile: View {
-    
+    @EnvironmentObject var authViewModel: AuthViewModel
+    @State private var showingImagePicker = false
+    @State private var inputImage: UIImage?
+
     var body: some View {
         HStack {
             RoundedRectangle(cornerRadius: 10)
-                .fill(Color.clear) // Use any color that fits your design
-                .frame(height: 70) // Adjust height as needed
-            
+                .fill(Color.clear)
+                .frame(height: 70)
                 .overlay(
                     HStack(spacing: 20) {
-                        // Use ZStack to overlay the image on the circle
                         ZStack {
                             Circle()
                                 .foregroundColor(Color(red: 0.07, green: 0.69, blue: 0.951))
-                                .frame(width: 95.0, height: 95.0) // Adjust the size of the circle as needed
+                                .frame(width: 95.0, height: 95.0)
                                 .opacity(0.5)
                             
-                            // Replace "person.fill" with your actual image name
-                            Image("me")
-                                .resizable() // Make the image resizable
-                            
-                                .aspectRatio(contentMode: .fill) // Fill the frame while preserving aspect ratio
-                                .frame(width: 105.0, height: 105.0) // Match the circle's size
-                                .clipShape(Circle()) // Clip the image to a circular shape
-                                .shadow(radius: 5)
+                            if let profilePicture = authViewModel.profilePicture {
+                                Image(uiImage: profilePicture)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 105.0, height: 105.0)
+                                    .clipShape(Circle())
+                                    .shadow(radius: 5)
+                            } else {
+                                Image("me") // Your placeholder image name
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 105.0, height: 105.0)
+                                    .clipShape(Circle())
+                                    .shadow(radius: 5)
+                            }
                         }
                         .padding(.leading, 5)
+                        .onTapGesture {
+                            self.showingImagePicker = true
+                        }
                         
-                        VStack(alignment: .leading){
+                        VStack(alignment: .leading) {
                             Spacer()
-                            Text("Luke")
+                            Text(authViewModel.username ?? "User")
                                 .font(.title2)
-                                .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
-                                .bold()
-                            
+                                .foregroundColor(Color.white)
                                 .bold()
                                 .padding(.trailing)
                             Text("Currently Cutting")
                                 .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
                                 .font(.headline)
-                   
                         }
                         
                         Spacer()
-                        
-
                     }
-                    
-                    // Add some horizontal padding inside the overlay
                 )
-            
+                .onAppear {
+                        authViewModel.fetchProfilePicture() // Fetch the profile picture when the view appears
+                    }
         }
         .padding(.horizontal, 10.0)
+        .sheet(isPresented: $showingImagePicker, onDismiss: loadImage) {
+            ImagePicker(selectedImage: self.$inputImage)
+                
+        }
+    }
+
+    func loadImage() {
+        guard let inputImage = inputImage else { return }
+        authViewModel.saveProfilePicture(image: inputImage)
     }
 }
-
-// Correct way to define a preview provider for your SwiftUI view
 struct TopProfile_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             TopProfile()
-                .environmentObject(WorkoutData())
+                .environmentObject(AuthViewModel()) // Provide the AuthViewModel for the preview
         }
     }
 }
