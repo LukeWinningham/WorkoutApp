@@ -12,26 +12,12 @@ struct ProfileView: View {
     @EnvironmentObject var workoutData: WorkoutData
     @EnvironmentObject var authViewModel: AuthViewModel // Access the AuthViewModel
 
-    @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
         ZStack(alignment: .top) { // Align content to the top
             Color(red: 18/255, green: 18/255, blue: 18/255)
                 .edgesIgnoringSafeArea(.all)
-                .navigationBarBackButtonHidden(true)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button(action: {
-                            self.presentationMode.wrappedValue.dismiss()
-                        }) {
-                            Image(systemName: "chevron.backward")
-                                .imageScale(.small)
-                                .font(.title)
-                                .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
-                                .shadow(radius: 3)
-                        }
-                    }
-                }
+           
             VStack(spacing: 0) { // Use VStack to place the border right below the image
                 Image("background") // Ensure you have an image named "background" in your assets
                     .resizable()

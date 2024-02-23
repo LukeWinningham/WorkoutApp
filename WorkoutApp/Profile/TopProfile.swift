@@ -8,34 +8,7 @@
 import SwiftUI
 import Combine
 import CloudKit
-extension AuthViewModel {
-    func saveProfilePicture(image: UIImage) {
-        guard let userIdentifier = self.userIdentifier else { return }
 
-        // Convert image to CKAsset
-        guard let asset = image.toCKAsset() else { return }
-
-        // Fetch PersonalData record for the current user
-        let predicate = NSPredicate(format: "userIdentifier == %@", userIdentifier)
-        let query = CKQuery(recordType: "PersonalData", predicate: predicate)
-
-        database.perform(query, inZoneWith: nil) { [weak self] records, error in
-            guard let self = self, let record = records?.first else { return }
-
-            // Update the ProfilePicture field with the new CKAsset
-            record["ProfilePicture"] = asset
-
-            // Save the updated record
-            self.database.save(record) { updatedRecord, error in
-                if let error = error {
-                    print("Error saving profile picture: \(error)")
-                    return
-                }
-                print("Profile picture updated successfully")
-            }
-        }
-    }
-}
 
 extension UIImage {
     func toCKAsset() -> CKAsset? {
@@ -79,7 +52,7 @@ struct TopProfile: View {
                                     .clipShape(Circle())
                                     .shadow(radius: 5)
                             } else {
-                                Image("me") // Your placeholder image name
+                                Image("person.crop.circle") // Your placeholder image name
                                     .resizable()
                                     .aspectRatio(contentMode: .fill)
                                     .frame(width: 105.0, height: 105.0)

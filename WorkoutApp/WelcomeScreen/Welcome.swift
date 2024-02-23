@@ -42,9 +42,9 @@ struct Welcome: View {
         }
     }
     private var welcomeSection: some View {
-        HStack {
+        /*     HStack {
             // Use NavigationLink to navigate to the ProfileView
-            NavigationLink(destination: ProfileView()) {
+          NavigationLink(destination: ProfileView()) {
                 if let profileImage = authViewModel.profilePicture {
                     // If there is a profile picture, display it
                     Image(uiImage: profileImage)
@@ -55,7 +55,7 @@ struct Welcome: View {
                         .shadow(radius: 5)
                 } else {
                     // If there is no profile picture, display a placeholder
-                    Image("placeholder") // Replace "placeholder" with your placeholder image name
+                    Image(systemName:"person.crop.circle") // Replace "placeholder" with your placeholder image name
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 30.0, height: 30.0)
@@ -66,6 +66,28 @@ struct Welcome: View {
             Spacer()
         }
         .padding()
+       */
+          
+        HStack {
+            Spacer() 
+
+
+
+          NavigationLink(destination: Discovery()) {
+
+                    Image(systemName:"magnifyingglass")
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 30, height: 30.0)
+                        .clipShape(Circle())
+                        .shadow(radius: 5)
+                        .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
+
+            }
+        }
+        .padding()
+          
+          
     }
 
 }

@@ -22,12 +22,14 @@ struct NavBar: View {
                     }
                     .tag(0)
             
-                Discovery()
+              /*  
+               Discovery()
                     .tabItem {
                         Image(systemName: navigationState.selectedTab == 2 ? "sparkle.magnifyingglass" : "magnifyingglass")
                         Text("Discover")
                     }
                     .tag(2)
+               */
                 
                 AddView().environmentObject(authViewModel)
                     .tabItem {
@@ -35,6 +37,14 @@ struct NavBar: View {
                         Text("Plan")
                     }
                     .tag(1)
+                
+                
+                ProfileView().environmentObject(authViewModel)
+                    .tabItem {
+                        Image(navigationState.selectedTab == 3 ? "pcf" : "pcirlce")
+                        Text("Profile")
+                    }
+                    .tag(3)
             }
             .navigationBarTitle("", displayMode: .inline)
         }

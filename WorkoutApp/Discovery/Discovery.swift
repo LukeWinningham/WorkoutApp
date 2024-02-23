@@ -69,7 +69,7 @@ struct Discovery: View {
                         Image(systemName: "magnifyingglass")
                             .foregroundColor(.gray)
                         TextField("Search", text: $searchText)
-                            .foregroundColor(Color.white)
+                            .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .background(Color(red: 60/255, green: 60/255, blue: 60/255))
                             .cornerRadius(8)

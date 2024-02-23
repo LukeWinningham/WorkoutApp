@@ -20,5 +20,53 @@
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6DF70ADB-C333-4EDF-BD59-FF5F8A76120B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WorkoutApp/WorkoutPacks/WorkoutPacks.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "260"
+            endingLineNumber = "260"
+            landmarkName = "addPack(name:image:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "6DF70ADB-C333-4EDF-BD59-FF5F8A76120B - f9fbeeac3b07b100"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Amson.WorkoutPacks.addPack(name: Swift.String, image: Swift.Optional&lt;__C.UIImage&gt;) -&gt; ()"
+                  moduleName = "Amson"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/lukewinningham/Desktop/Amson/WorkoutApp/WorkoutPacks/WorkoutPacks.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "260"
+                  endingLineNumber = "260"
+                  offsetFromSymbolStart = "340">
+               </Location>
+               <Location
+                  uuid = "6DF70ADB-C333-4EDF-BD59-FF5F8A76120B - f9fbeeac3b07b100"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Amson.WorkoutPacks.addPack(name: Swift.String, image: Swift.Optional&lt;__C.UIImage&gt;) -&gt; ()"
+                  moduleName = "Amson"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/lukewinningham/Desktop/Amson/WorkoutApp/WorkoutPacks/WorkoutPacks.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "260"
+                  endingLineNumber = "260"
+                  offsetFromSymbolStart = "332">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

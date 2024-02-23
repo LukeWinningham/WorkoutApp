@@ -61,6 +61,7 @@ struct AddView: View {
     @State private var showingWorkoutPacks = false
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var authViewModel: AuthViewModel
+    let maxCharacterCount = 12
 
     var body: some View {
         NavigationView {
@@ -151,16 +152,17 @@ struct AddView: View {
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
                 .foregroundColor(Color.white)
-                
+                .onChange(of: newItemName) { newValue in
+                    if newValue.count > maxCharacterCount {
+                        newItemName = String(newValue.prefix(maxCharacterCount))
+                    }
+                }
             Button("Save") {
-                
                 addDay(withName: newItemName)
-                
             }
             .disabled(newItemName.isEmpty || currentPackID == nil)
             .padding(.trailing)
             .foregroundColor(Color.white)
-            
         }
         .padding()
         .background(RoundedRectangle(cornerRadius: 10)
@@ -169,6 +171,7 @@ struct AddView: View {
         .padding()
         .padding(.bottom, 420)
     }
+
     
 
     var daysListView: some View {

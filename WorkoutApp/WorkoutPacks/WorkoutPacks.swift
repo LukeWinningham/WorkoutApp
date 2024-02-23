@@ -258,26 +258,70 @@ struct WorkoutPacks: View {
 
 
     func addPack(name: String, image: UIImage?) {
-        let packID = UUID()
+        let packID = UUID().uuidString // Generate a unique ID string for the new pack
         let newPackRecord = CKRecord(recordType: "WorkoutPacks")
-        newPackRecord["PackID"] = [packID.uuidString]
-        newPackRecord["PackInfo"] = [name] // Storing the pack name
-        newPackRecord["username"] = CKRecord.Reference(recordID: CKRecord.ID(recordName: authViewModel.userIdentifier ?? ""), action: .none) // Referencing the username
+        newPackRecord["PackInfo"] = [name] // Wrap the name in an array to match the expected STRING_LIST type
+        newPackRecord["PackID"] = [packID] // Set PackID as an array containing the single ID string
 
         if let image = image, let asset = convertImageToCKAsset(image: image) {
-            newPackRecord["PackImage"] = asset // Storing the image as an asset
+            newPackRecord["PackImage"] = asset
         }
 
         let database = CKContainer.default().publicCloudDatabase
         database.save(newPackRecord) { record, error in
-            if let error = error {
-                print("Error saving new pack: \(error.localizedDescription)")
-            } else {
-                print("Pack saved successfully.")
-                self.fetchPacks()
+            DispatchQueue.main.async {
+                if let error = error {
+                    print("Error saving new pack: \(error.localizedDescription)")
+                } else if let savedRecord = record {
+                    print("Pack saved successfully.")
+                    self.referencePackInUserRecord(packRecordID: savedRecord.recordID) // Use the saved record's ID
+                }
             }
         }
     }
+
+    func referencePackInUserRecord(packRecordID: CKRecord.ID) {
+        guard let userIdentifier = authViewModel.userIdentifier, !userIdentifier.isEmpty else {
+            print("User identifier is not available.")
+            return
+        }
+
+        let database = CKContainer.default().publicCloudDatabase
+        let predicate = NSPredicate(format: "userIdentifier == %@", userIdentifier)
+        let query = CKQuery(recordType: "PersonalData", predicate: predicate)
+
+        database.perform(query, inZoneWith: nil) { records, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    print("Failed to fetch PersonalData record: \(error.localizedDescription)")
+                    return
+                }
+
+                guard let personalDataRecord = records?.first else {
+                    print("PersonalData record not found for userIdentifier: \(userIdentifier)")
+                    return
+                }
+
+                var allPacksRefs = personalDataRecord["AllPacks"] as? [CKRecord.Reference] ?? []
+                let newPackRef = CKRecord.Reference(recordID: packRecordID, action: .none) // Use the record ID of the newly created pack
+                allPacksRefs.append(newPackRef)
+
+                personalDataRecord["AllPacks"] = allPacksRefs
+
+                database.save(personalDataRecord) { savedRecord, saveError in
+                    DispatchQueue.main.async {
+                        if let saveError = saveError {
+                            print("Failed to update AllPacks in PersonalData: \(saveError.localizedDescription)")
+                        } else {
+                            print("AllPacks updated successfully with new pack record name.")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
 
     func convertImageToCKAsset(image: UIImage) -> CKAsset? {
         guard let imageData = image.jpegData(compressionQuality: 0.7) else { return nil }
@@ -340,7 +384,7 @@ struct WorkoutPacks: View {
                 }
 
                 guard let records = records, !records.isEmpty else {
-                    print("No WorkoutPacks records found for provided packIDs")
+                    print("No WorkoutPacks records found for provided packIDs. PackIDs: \(packIDs)")
                     return
                 }
 

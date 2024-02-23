@@ -50,6 +50,7 @@ class AuthViewModel: ObservableObject {
         }
     }
     func signIn(userIdentifier: String) {
+        UserDefaults.standard.set(true, forKey: "isUserSignedIn") // Mark the user as signed in
         UserDefaults.standard.set(userIdentifier, forKey: "userIdentifier")
         self.isUserAuthenticated = true
         self.userIdentifier = userIdentifier
@@ -58,15 +59,44 @@ class AuthViewModel: ObservableObject {
     }
 
     func signOut() {
+        UserDefaults.standard.set(false, forKey: "isUserSignedIn") // Mark the user as signed out
+        UserDefaults.standard.removeObject(forKey: "userIdentifier")
         self.isUserAuthenticated = false
         self.userIdentifier = nil
-        UserDefaults.standard.removeObject(forKey: "userIdentifier")
+        self.isProfileCompleted = false
     }
+
 
     func completeProfile() {
+        UserDefaults.standard.set(true, forKey: "isProfileCompleted")
         self.isProfileCompleted = true
     }
+    func saveProfilePicture(image: UIImage) {
+        guard let userIdentifier = self.userIdentifier else { return }
 
+        // Convert image to CKAsset
+        guard let asset = image.toCKAsset() else { return }
+
+        // Fetch PersonalData record for the current user
+        let predicate = NSPredicate(format: "userIdentifier == %@", userIdentifier)
+        let query = CKQuery(recordType: "PersonalData", predicate: predicate)
+
+        database.perform(query, inZoneWith: nil) { [weak self] records, error in
+            guard let self = self, let record = records?.first else { return }
+
+            // Update the ProfilePicture field with the new CKAsset
+            record["ProfilePicture"] = asset
+
+            // Save the updated record
+            self.database.save(record) { updatedRecord, error in
+                if let error = error {
+                    print("Error saving profile picture: \(error)")
+                    return
+                }
+                print("Profile picture updated successfully")
+            }
+        }
+    }
     func fetchUsername() {
         guard let userIdentifier = self.userIdentifier else { return }
 
@@ -161,9 +191,14 @@ struct LogOn: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(gradient: Gradient(colors: [Color(red: 0.067, green: 0.69, blue: 0.951), Color(hue: 1.0, saturation: 0.251, brightness: 0.675)]), startPoint: .topLeading, endPoint: .bottomTrailing)
+            Color(red: 18/255, green: 18/255, blue: 18/255)
                 .edgesIgnoringSafeArea(.all)
             VStack {
+                Image("Logo") // Assuming "AppIcon" is the name of your image asset
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 500, height: 500) // Adjust size as needed
+                
                 if authViewModel.isUserAuthenticated {
                     if !authViewModel.isProfileCompleted {
                         PersonalData().environmentObject(authViewModel)
@@ -185,4 +220,3 @@ struct LogOn_Previews: PreviewProvider {
         LogOn().environmentObject(AuthViewModel())
     }
 }
-
