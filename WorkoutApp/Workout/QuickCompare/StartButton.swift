@@ -9,14 +9,11 @@ import SwiftUI
 import Combine
 
 struct StartButton: View {
-    @EnvironmentObject var weekData: WeekData
-    @EnvironmentObject var workoutData: WorkoutData // Access WorkoutData from the environment
+
 
     var body: some View {
         Group {
-            if let todayTasks = weekData.days.first(where: { $0.name == getCurrentDay() }), !todayTasks.items.isEmpty{
-                // Only show the "Start Workout" button if there are workouts for today
-                NavigationLink(destination: WorkoutDetails().environmentObject(weekData).environmentObject(WorkoutData())) {
+            
                     ZStack {
                         
                         VStack{
@@ -38,11 +35,7 @@ struct StartButton: View {
             }
         }
     }
-    private func getCurrentDay() -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "EEEE"
-        return dateFormatter.string(from: Date())
-    }
+
 }
 
 
