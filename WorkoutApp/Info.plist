@@ -4,5 +4,11 @@
 <dict>
 	<key>CFBundleIconName</key>
 	<string>AppIcon</string>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>com.owlexandria.amson.workoutActivity</string>
+	</array>
+	<key>NSUserActivityTypes </key>
+	<array/>
 </dict>
 </plist>

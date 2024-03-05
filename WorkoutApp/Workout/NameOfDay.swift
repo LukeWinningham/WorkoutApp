@@ -5,16 +5,23 @@
 //  Created by Luke Winningham on 2/5/24.
 //
 
-
 import SwiftUI
 import Combine
 import CloudKit
+import ActivityKit
+import WidgetKit
 
 struct NameOfDay: View {
     @State private var showingExerciseView = false
     @State private var selectedExerciseIndex: Int?
-    @State private var exercises: [ExerciseDetail] = [] // Use a struct to hold exercise details
-    @State private var dayName: String = "" // State property for day name
+    @State private var exercises: [ExerciseDetail] = []
+    @State private var dayName: String = ""
+    @State private var currentExerciseIndex = 0
+    @State private var currentSet = 1
+    @State private var workoutStarted = false
+    @State private var currentActivity: Activity<WorkoutAttributes>?
+    @State private var currentReps = 0 // Added state for current reps
+
     @EnvironmentObject var authViewModel: AuthViewModel
     @Environment(\.presentationMode) var presentationMode
 
@@ -22,7 +29,6 @@ struct NameOfDay: View {
         ZStack {
             Color(red: 18/255, green: 18/255, blue: 18/255).edgesIgnoringSafeArea(.all)
                 .navigationBarBackButtonHidden(true)
-
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button(action: {
@@ -35,22 +41,18 @@ struct NameOfDay: View {
                                 .shadow(radius: 3)
                         }
                     }
-                    }
+                }
+
             VStack {
-                
                 Text(dayName)
                     .font(.largeTitle)
                     .foregroundColor(Color.white)
                     .padding()
-                
-                    .frame(maxWidth: .infinity) // Ensure the header stretches across the screen
-                                  .background(Color(red: 18/255, green: 18/255, blue: 18/255)) // Background color of the header
-                                  .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 5)
-                Spacer(minLength: 20) // Add spacer or padding to create space between day name and scroll view
-
+                    .frame(maxWidth: .infinity)
+                    .background(Color(red: 18/255, green: 18/255, blue: 18/255))
+                    .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 5)
+                Spacer(minLength: 20)
                 ScrollView {
-                 
-
                     LazyVStack(spacing: 10) {
                         ForEach(exercises.indices, id: \.self) { index in
                             let exercise = exercises[index]
@@ -68,12 +70,94 @@ struct NameOfDay: View {
                         }
                     }
                 }
-                
-                
+                if workoutStarted && currentExerciseIndex < exercises.count {
+                    Text("Exercise: \(exercises[currentExerciseIndex].chosenExercise)")
+                        .foregroundColor(.white)
+                        .padding()
+
+                    Text("Set: \(currentSet) of \(exercises[currentExerciseIndex].sets)")
+                        .foregroundColor(.white)
+                        .padding()
+
+
+                    HStack {
+                        Button(action: {
+                            goToPrevious()
+                        }) {
+                            Image(systemName: "arrow.left")
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.blue)
+                                .cornerRadius(10)
+                        }
+
+                        Button(action: {
+                            goToNext()
+                        }) {
+                            Image(systemName: "arrow.right")
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.green)
+                                .cornerRadius(10)
+                        }
+                    }
+                } else {
+                    Button("Start Workout") {
+                        startWorkout()
+                    }
+                    .padding()
+                    .foregroundColor(.white)
+                    .background(Color.blue)
+                    .cornerRadius(10)
+                }
+            }
+        }
+        .onAppear(perform: loadExercises)
+    }
+
+    private func startWorkout() {
+        workoutStarted = true
+        currentExerciseIndex = 0
+        currentSet = 1
+        Task {
+            await startLiveActivity()
+        }
+    }
+
+    private func goToNext() {
+        let currentExercise = exercises[currentExerciseIndex]
+        if currentSet < currentExercise.sets {
+            currentSet += 1
+        } else if currentExerciseIndex < exercises.count - 1 {
+            currentExerciseIndex += 1
+            currentSet = 1
+        } else {
+            print("Workout completed!")
+            workoutStarted = false
+            
+            Task {
+                await endLiveActivity()
             }
         }
         
-        .onAppear(perform: loadExercises)
+        Task {
+            await updateLiveActivity()
+        }
+    }
+
+    private func goToPrevious() {
+        if currentSet > 1 {
+            currentSet -= 1
+        } else if currentExerciseIndex > 0 {
+            currentExerciseIndex -= 1
+            currentSet = exercises[currentExerciseIndex].sets
+        } else {
+            print("Beginning of workout")
+        }
+        
+        Task {
+            await updateLiveActivity()
+        }
     }
 
     private func loadExercises() {
@@ -117,7 +201,7 @@ struct NameOfDay: View {
                 }
 
                 DispatchQueue.main.async {
-                    self.dayName = dayName // Set the DayName to the state property
+                    self.dayName = dayName
                 }
 
                 let dayIDReference = CKRecord.Reference(recordID: CKRecord.ID(recordName: dayID), action: .none)
@@ -131,17 +215,90 @@ struct NameOfDay: View {
                     }
 
                     DispatchQueue.main.async {
-                        self.exercises = records?.map { record in
-                            ExerciseDetail(
-                                chosenExercise: record["ChosenExercise"] as? String ?? "Unknown",
-                                sets: record["Sets"] as? Int ?? 0,
-                                time: record["Time"] as? Int ?? 0 // Assuming 'Time' is stored in seconds
+                        self.exercises = records?.compactMap { record in
+                            guard let chosenExercise = record["ChosenExercise"] as? String,
+                                  let sets = record["Sets"] as? Int,
+                                  let time = record["Time"] as? Int else {
+                                print("Missing data in record: \(record)")
+                                return nil
+                            }
+                            let repsPerSet = self.fetchRepsDataFromPackExercises(for: record)
+                            print("Exercise: \(chosenExercise), Sets: \(sets), Time: \(time), Reps Per Set: \(repsPerSet)")
+                            return ExerciseDetail(
+                                chosenExercise: chosenExercise,
+                                sets: sets,
+                                time: time,
+                                repsPerSet: repsPerSet
                             )
                         } ?? []
                     }
+
                 }
             }
         }
+    }
+
+
+    private func fetchRepsDataFromPackExercises(for record: CKRecord) -> [Int] {
+        guard let repsData = record["Reps"] as? Data else {
+            print("Reps data not found.")
+            return []
+        }
+        do {
+            let decoder = JSONDecoder()
+            let repsArray = try decoder.decode([Int].self, from: repsData)
+            return repsArray
+        } catch {
+            print("Error decoding reps data: \(error)")
+            return []
+        }
+    }
+
+    
+
+    @MainActor
+    private func startLiveActivity() async {
+        guard ActivityAuthorizationInfo().areActivitiesEnabled else {
+            print("Activities are not enabled.")
+            return
+        }
+
+        do {
+            let attributes = WorkoutAttributes()
+            let initialContentState = WorkoutAttributes.ContentState(
+                exerciseName: exercises[currentExerciseIndex].chosenExercise,
+                currentSet: currentSet,
+                totalSets: exercises[currentExerciseIndex].sets,
+                repsPerSet: []
+            )
+
+            let activity = try Activity<WorkoutAttributes>.request(
+                attributes: attributes,
+                contentState: initialContentState,
+                pushType: nil
+            )
+
+            self.currentActivity = activity
+        } catch {
+            print("Failed to request activity: \(error)")
+        }
+    }
+
+    @MainActor private func updateLiveActivity() async {
+        guard let activity = currentActivity else { return }
+
+        let updatedContentState = WorkoutAttributes.ContentState(
+            exerciseName: exercises[currentExerciseIndex].chosenExercise,
+            currentSet: currentSet,
+            totalSets: exercises[currentExerciseIndex].sets,
+            repsPerSet: []
+        )
+
+        await activity.update(using: updatedContentState)
+    }
+
+    @MainActor private func endLiveActivity() async {
+        await currentActivity?.end(dismissalPolicy: .immediate)
     }
 }
 
@@ -196,8 +353,17 @@ struct ExerciseView: View {
 struct ExerciseDetail {
     var chosenExercise: String
     var sets: Int
-    var time: Int // Time in seconds
+    var time: Int
+    var repsPerSet: [Int] // Add repsPerSet property
+
+    init(chosenExercise: String, sets: Int, time: Int, repsPerSet: [Int]) { // Update initializer
+        self.chosenExercise = chosenExercise
+        self.sets = sets
+        self.time = time
+        self.repsPerSet = repsPerSet
+    }
 }
+
 
 // Dummy preview provider
 struct NameOfDay_Previews: PreviewProvider {

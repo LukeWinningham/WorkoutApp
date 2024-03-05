@@ -32,7 +32,7 @@ struct ProfileView: View {
             .edgesIgnoringSafeArea(.top) // Allow the image and border to extend to the top edge of the screen
 
             VStack(spacing: 30.0) {
-                Spacer().frame(height: 70) // Adjust this height to move the content barely below the image
+                Spacer().frame(height: 110) // Adjust this height to move the content barely below the image
 
                 TopProfile()
                 QuickInfo()

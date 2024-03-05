@@ -11,6 +11,8 @@ import Combine
 struct Welcome: View {
     @EnvironmentObject var navigationState: NavigationState
     @EnvironmentObject var authViewModel: AuthViewModel // Access the AuthViewModel
+    @State private var showingSearchBar = false // State to control the visibility of the search bar
+    @State private var searchText = ""
 
     var body: some View {
         ZStack {
@@ -18,6 +20,7 @@ struct Welcome: View {
                 .edgesIgnoringSafeArea(.all)
             VStack(spacing: 30) {
                 welcomeSection
+                
                 VStack {
                     VStack {
                         Text("Welcome Back,")
@@ -35,6 +38,7 @@ struct Welcome: View {
                 TodaysWorkout() // Assuming this is defined elsewhere
                 Spacer()
                 FriendActivity() // Assuming this is defined elsewhere
+                
             }
             .onAppear {
                 authViewModel.fetchProfilePicture()
@@ -42,53 +46,43 @@ struct Welcome: View {
         }
     }
     private var welcomeSection: some View {
-        /*     HStack {
-            // Use NavigationLink to navigate to the ProfileView
-          NavigationLink(destination: ProfileView()) {
-                if let profileImage = authViewModel.profilePicture {
-                    // If there is a profile picture, display it
-                    Image(uiImage: profileImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 30.0, height: 30.0)
-                        .clipShape(Circle())
-                        .shadow(radius: 5)
-                } else {
-                    // If there is no profile picture, display a placeholder
-                    Image(systemName:"person.crop.circle") // Replace "placeholder" with your placeholder image name
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 30.0, height: 30.0)
-                        .clipShape(Circle())
-                        .shadow(radius: 5)
-                }
-            }
-            Spacer()
-        }
-        .padding()
-       */
-          
         HStack {
-            Spacer() 
-
-
-
-          NavigationLink(destination: Discovery()) {
-
-                    Image(systemName:"magnifyingglass")
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 30, height: 30.0)
-                        .clipShape(Circle())
-                        .shadow(radius: 5)
+            Spacer()
+            // Use NavigationLink to navigate to the ProfileView
+            Button(action: {
+                showingSearchBar.toggle() // Toggle the visibility of the search bar
+            }) {
+                Image(systemName: "magnifyingglass")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 25, height: 25)
+                    .foregroundColor(Color.white)
+                    .padding(.trailing, 15)
+            }
+            .padding()
+           
+            .background(Color(red: 18/255, green: 18/255, blue: 18/255))
+            .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
+            
+            // Custom Search Bar, shown or hidden based on `showingSearchBar` state
+            if showingSearchBar {
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(.gray)
+                    TextField("Search", text: $searchText)
                         .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
-
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .background(Color(red: 60/255, green: 60/255, blue: 60/255))
+                        .cornerRadius(8)
+                }
+                .padding(.horizontal, 10)
+                .transition(.move(edge: .trailing)) // Add a transition for the search bar appearance
+                .animation(.default, value: showingSearchBar) // Animate the transition
+                
             }
         }
-        .padding()
-          
-          
-    }
+      
+}
 
 }
 

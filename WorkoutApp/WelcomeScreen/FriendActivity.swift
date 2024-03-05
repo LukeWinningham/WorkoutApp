@@ -16,8 +16,8 @@ struct FriendActivity: View {
                     .foregroundColor(Color(red: 251/255, green: 251/255, blue: 251/255))
                     .bold()
 
-                Text("See more")
-                    .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255))
+          /*      Text("See more")
+                    .foregroundColor(Color(red: 167/255, green: 167/255, blue: 167/255)) */
             }
 
             ScrollView {

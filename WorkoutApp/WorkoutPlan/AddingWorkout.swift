@@ -108,6 +108,7 @@ struct AddView: View {
     var headerView: some View {
         HStack {
             // Profile picture on the far left as a navigation link
+        /*
             NavigationLink(destination: ProfileView()) {
                 if let profileImage = authViewModel.profilePicture {
                     Image(uiImage: profileImage)
@@ -124,6 +125,7 @@ struct AddView: View {
                 }
             }
             .padding(.leading, 10)
+            */
 
 
             Text("Add A Day")
